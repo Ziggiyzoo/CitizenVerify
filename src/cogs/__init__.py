@@ -1,3 +1,6 @@
+"""
+Astral Admin Cogs
+"""
 from src.cogs import slash_commands
 
 def setup(bot):

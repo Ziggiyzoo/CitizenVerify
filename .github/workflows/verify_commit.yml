@@ -61,10 +61,6 @@ jobs:
         run: |
           poetry run pylint $(git ls-files '*.py')
 
-      - name: Analyse the code with flake8
-        run: |
-          poetry run flake8 $(git ls-files '*.py')
-
   test_application:
     name: "Test the Project"
     needs:

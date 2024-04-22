@@ -7,4 +7,4 @@ COPY AstralAdmin ./app
 WORKDIR /app
 
 RUN poetry install --without dev
-ENTRYPOINT ["poetry", "run", "python", "-m", "main.py"]
+ENTRYPOINT ["poetry", "run", "python", "-m", "/AstralAdmin/main.py"]

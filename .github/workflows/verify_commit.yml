@@ -115,45 +115,6 @@ jobs:
         run: |
           poetry run python -m pytest
 
-  build_and_run_image:
-    name: "Build the Project as an Image and Run it as a Container"
-    needs:
-      - lint_application
-      - test_application
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set Variables
-        id: variables
-        env:
-          FIREBASE_SECRET: ${{ secrets.FIREBASE_SECRET }}
-        run: |
-          echo "datetime=$(date +%Y%m%dT%H%M%SZ)" >> $GITHUB_OUTPUT
-          echo "userid=$(id -u)" >> $GITHUB_OUTPUT
-          echo "groupid=$(id -g)" >> $GITHUB_OUTPUT
-          echo "${FIREBASE_SECRET}" > $(pwd)/firebase_secret.json
-
-      - name: Test Buildah Build
-        run: |
-          buildah bud \
-          --file image/brvns.Containerfile \
-          --tag ghcr.io/ziggiyzoo/brvns-discord-bot:gh-${{ steps.variables.outputs.datetime }} \
-          .
-
-      - name: Test Buildah Run
-        env:
-          TOKEN: ${{ secrets.TEST_DISCORDTOKEN }}
-          SC_API_KEY: ${{ secrets.SC_API_KEY }}
-
-        run: |
-          timeout 60 podman run \
-          --env TOKEN=${{ secrets.TEST_DISCORDTOKEN }} \
-          --env SC_API_KEY=${{ secrets.SC_API_KEY }} \
-          --volume $(pwd)/firebase_secret.json:/var/secrets/firebase_secret.json:ro \
-          ghcr.io/ziggiyzoo/brvns-discord-bot:gh-${{ steps.variables.outputs.datetime }} \
-          || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi
-
   run_application:
     name: "Run the Project"
     needs:

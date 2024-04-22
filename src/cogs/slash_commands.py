@@ -1,3 +1,6 @@
+"""
+All User Slash Commands for Astral Admin
+"""
 from discord.ext import commands
 
 class SlashCommands(commands.Cog):

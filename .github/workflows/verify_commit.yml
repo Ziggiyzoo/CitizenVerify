@@ -4,10 +4,12 @@ on:
   workflow_dispatch:
   push:
     branches:
+      - develop
       - production
   pull_request:
     branches:
       - production
+      - develop
 
 defaults:
   run:

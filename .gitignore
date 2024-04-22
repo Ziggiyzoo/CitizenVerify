@@ -1,3 +1,6 @@
+# Custom
+AstralAdmin/src/logic/firebase_secrets.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

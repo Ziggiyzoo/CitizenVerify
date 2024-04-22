@@ -161,8 +161,8 @@ jobs:
       - test_application
     strategy:
       matrix:
-        python-version: [ "3.8", "3.9", "3.10" ]
-        poetry-version: [ "1.4.0" ]
+        python-version: [ "3.11" ]
+        poetry-version: [ "1.8.2" ]
         # os: [ ubuntu-latest, windows-latest ]
     runs-on: ubuntu-latest
     steps:

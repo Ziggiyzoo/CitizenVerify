@@ -2,10 +2,6 @@ name: Verify Commit
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - develop
-      - production
   pull_request:
     branches:
       - production
@@ -172,4 +168,4 @@ jobs:
         timeout-minutes: 2
         continue-on-error: true
         run: |
-          poetry run python main.py
+          poetry run python /AstralAdmin/main.py

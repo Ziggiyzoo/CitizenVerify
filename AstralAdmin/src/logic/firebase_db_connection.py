@@ -66,10 +66,10 @@ async def update_user_verification_status(author_id: str, user_verification_prog
     user_ref = users_col.document(f"{author_id}")
     try:
         # Update the User Fields
-        user_ref.set(
+        user_ref.update(
             {
                 "user_verification_progress": user_verification_progress,
-                "user_verificatioon_status": user_verification_status
+                "user_verification_status": user_verification_status
             }
         )
         return True
@@ -100,6 +100,7 @@ async def get_user(author_id: str):
     try:
         user_ref = users_col.document(f"{author_id}")
     except exceptions.FirebaseError as exc:
+        print(exc)
         return None
     
     if user_ref.get().exists:

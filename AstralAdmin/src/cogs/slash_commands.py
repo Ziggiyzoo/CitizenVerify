@@ -2,6 +2,7 @@
 All User Slash Commands for Astral Admin
 """
 import discord
+import datetime
 import random
 import string
 
@@ -30,6 +31,9 @@ class SlashCommands(commands.Cog):
         name="bind-rsi-account", description="Bind your Discord and RSI Accounts"
     )
     async def bind_rsi_account(self, ctx, rsi_handle: discord.Option(str)):
+        """
+        Command to start the process of binding Discord & RSI Accounts
+        """
         author_name: str = ctx.author.name
         author_id: int = ctx.author.id
         guild_id: int = ctx.guild.id
@@ -83,6 +87,7 @@ class SlashCommands(commands.Cog):
                     # The user has begun the process and needs verification
                     if await rsi_lookup.verify_rsi_handle(rsi_handle=user_info["user_rsi_handle"], verification_code=user_info["user_verification_code"]):
                         await firebase_db_connection.update_user_verification_status(author_id=author_id, user_verification_progress=2, user_verification_status=True)
+                        await firebase_db_connection.update_user_guild_verification(author_id=author_id, guild_id=guild_id, guild_verification_status=True)
                         await ctx.followup.send(
                             f"Thank you {rsi_handle}, your Discord and RSI Accounts are now symbollically bound."
                         )
@@ -101,6 +106,49 @@ class SlashCommands(commands.Cog):
                         "\nIf you haven't already, sign up for a position at Astral Dynamics!" +
                         "\nhttps://robertsspaceindustries.com/orgs/ASTDYN"
                     )
+
+    @commands.slash_command(
+        name="update-roles", description="Update the roles of bound members on the discord."
+    )
+    @commands.has_permissions(administrator=True)
+    async def update_org_roles(self, ctx):
+        """
+        Admin only command to trigger the update of Discord roles based of the RSI Org page.
+        """
+        # Get list of verified members in the guild
+        self.verified_members = await firebase_db_connection.get_guild_verified_members(guild_id=ctx.guild_id)
+
+    @commands.slash_commands(
+        name="add-guild", description="Add the Discord Guild to the DB."
+    )
+    @commands.has_permissions(administrator=True)
+    async def add_guild(self, ctx, spectrum_id: discord.Option(str)):
+        """
+        Admin only command to add the guild to the DB
+        """
+        if await firebase_db_connection.put_new_guild(
+            ctx.guild_id, ctx.guild.name, spectrum_id
+            ):
+            await ctx.respond("This Discord server has been added to the Database.",
+                              ephemeral=True)
+        else:
+            await ctx.respond("The Discord server failed to be added to the Database",
+                              ephemeral=True)
+    
+    @commands.slash_command(
+            name="del-guild", description="Delete the Discord Guild from the DB."
+    )
+    @commands.has_permissions(administrator=True)
+    async def del_guild(self, ctx):
+        """
+        Admin only command to delete the Discord Guild from the DB
+        """
+        if await firebase_db_connection.del_guild(guild_id=ctx.guild_id):
+            await ctx.respond("The Discord server has been removed from the Database",
+                                ephemeral=True)
+        else:
+            ctx.respond("The Discord server failed to be removed from the Database",
+                        ephemeral=True)
 
 def setup(bot):
     """

@@ -24,6 +24,7 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 users_col = db.collection("users")
+guilds_col = db.collection("guilds")
 
 async def put_new_user(author_id: int, guild_id: int, user_verification_code: str, rsi_handle: str):
     """
@@ -53,11 +54,33 @@ async def put_new_user(author_id: int, guild_id: int, user_verification_code: st
     except exceptions.FirebaseError as exc:
         return False
 
-async def put_new_guild(guild_id: int):
+async def put_new_guild(guild_id: int, guild_name: str, spectrum_id:str):
     """
     Add New Guild to the DB
     """
-    # TODO: This needs to be done!
+    guild_ref = guilds_col.document(f"{guild_id}")
+    try:
+        # Set the Guilds Fields
+        guild_ref.set(
+            {
+                "guild_name": guild_name,
+                "guild_spectrum_id": spectrum_id
+            }
+        )
+        return True
+    except exceptions.FirebaseError as exc:
+        return False
+    
+async def del_guild(guild_id: int):
+    """
+    Delete Guild from the DB
+    """
+    guild_ref = guilds_col.document(f"{guild_id}")
+    try:
+        guild_ref.delete()
+        return True
+    except exceptions.FirebaseError as exc:
+        return False
 
 async def update_user_verification_status(author_id: str, user_verification_progress: int, user_verification_status: bool):
     """
@@ -76,17 +99,27 @@ async def update_user_verification_status(author_id: str, user_verification_prog
     except exceptions.FirebaseError as exc:
         return False
 
-async def update_user_guild_verification(author_id: str, guild_id: str, guild_verification_time: datetime, guild_verification_status: bool):
+async def update_user_guild_verification(author_id: str, guild_id: str, guild_verification_status: bool):
     """
     Update User Doc with Guild Verification Info
     """
     user_guild_ref = users_col.document(f"{author_id}").collection("user_guilds").document(f"{guild_id}")
+    guild_ref = guilds_col.document(f"{guild_id}").collection("members").document(f"{author_id}")
     try:
         # Update User Guild Collection
         user_guild_ref.set(
             {
                 "verified": guild_verification_status,
-                "verified_on": guild_verification_time
+                "verified_on": firestore.SERVER_TIMESTAMP,
+            }
+        )
+
+        # Set Guild User information
+        guild_ref.set(
+            {
+                "verified": guild_verification_status,
+                "verified_on": firestore.SERVER_TIMESTAMP,
+                "user": author_id
             }
         )
         return True
@@ -122,3 +155,7 @@ async def get_user_guild(author_id: str, guild_id: str):
     else:
         return None
 
+async def get_verified_guild_members(guild_id: int):
+    """
+    Get a list of verified Guild Members
+    """

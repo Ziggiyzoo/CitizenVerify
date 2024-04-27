@@ -25,7 +25,7 @@ class SlashCommands(commands.Cog):
         Ping! :)
         """
         await ctx.respond("Pong!", ephemeral=True)
-    
+
     @commands.slash_command(
         name="bind-rsi-account", description="Bind your Discord and RSI Accounts"
     )
@@ -71,28 +71,37 @@ class SlashCommands(commands.Cog):
                 )
 
                 # Update the user verification step to 1
-                await firebase_db_connection.update_user_verification_status(author_id=author_id, user_verification_status=False, user_verification_progress=1)      
-     
+                await firebase_db_connection.update_user_verification_status(author_id=author_id,
+                                                                             user_verification_status=False,
+                                                                             user_verification_progress=1)
+
             else:
                 if user_info["user_verification_progress"] == 0:
                     if user_info["user_verification_code"] is not None:
-                        await firebase_db_connection.update_user_verification_status(author_id=author_id, user_verification_status=False, user_verification_progress=1)
+                        await firebase_db_connection.update_user_verification_status(author_id=author_id,
+                                                                                     user_verification_status=False,
+                                                                                     user_verification_progress=1)
                     else:
                         ctx.followup.send(
                             "There has been an error. Please contact a server Admin."
                         )
 
-                if user_info["user_verification_progress"] == 1:                     
+                if user_info["user_verification_progress"] == 1:                   
                     # The user has begun the process and needs verification
-                    if await rsi_lookup.verify_rsi_handle(rsi_handle=user_info["user_rsi_handle"], verification_code=user_info["user_verification_code"]):
-                        await firebase_db_connection.update_user_verification_status(author_id=author_id, user_verification_progress=2, user_verification_status=True)
-                        await firebase_db_connection.update_user_guild_verification(author_id=author_id, guild_id=guild_id, guild_verification_status=True)
+                    if await rsi_lookup.verify_rsi_handle(rsi_handle=user_info["user_rsi_handle"],
+                                                          verification_code=user_info["user_verification_code"]):
+                        await firebase_db_connection.update_user_verification_status(author_id=author_id,
+                                                                                     user_verification_progress=2,
+                                                                                     user_verification_status=True)
+                        await firebase_db_connection.update_user_guild_verification(author_id=author_id,
+                                                                                    guild_id=guild_id,
+                                                                                    guild_verification_status=True)
                         user_list = []
                         await update_user_roles(user_list=user_list.append(user_info), bot=self.bot, ctx=ctx)
                         await ctx.followup.send(
                             f"Thank you {rsi_handle}, your Discord and RSI Accounts are now symbollically bound."
-                            + "\n\nYou will not be able to access any more of the server unless you are a Member or Affiliate "
-                            + "of Astral Dynamics."
+                            + "\n\nYou will not be able to access any more of the server unless you are a "
+                            + "Member or Affiliate of Astral Dynamics."
                         )
                     
                     else:

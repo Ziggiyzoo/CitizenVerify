@@ -2,4 +2,4 @@
 max-line-length=120
 
 [TYPECHECK]
-ignored-classes=discord.Options, firebase_Admin.firestore.SERVER_TIMESTAMP
+ignored-classes=Options, SERVER_TIMESTAMP

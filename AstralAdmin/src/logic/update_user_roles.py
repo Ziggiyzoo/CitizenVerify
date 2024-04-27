@@ -1,3 +1,6 @@
+"""
+Module to update a users discord roles.
+"""
 import discord
 
 from src.logic import rsi_lookup
@@ -58,7 +61,7 @@ async def update_user_roles(self, user_list, bot: discord.bot, ctx):
                 # Uh Oh
                 await ctx.respond("Failed to update role for User: " + self.user_handle + ". Error: " + exc,
                             ephemeral=True )
-                
+
             except discord.DiscordException as exc:
                 # Uh Oh
                 await ctx.respond("Failed to update role for User: " + str(self.user_handle) + ". Error: " + str(exc),

@@ -1,3 +1,5 @@
 [FORMAT]
 max-line-length=120
-ignore-on-opaque-interference=False
+
+[TYPECHECK]
+ignore-on-opaque-interference=no

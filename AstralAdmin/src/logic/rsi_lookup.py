@@ -17,7 +17,6 @@ async def check_rsi_handle(rsi_handle):
     contents = response.json()
     if str(response) == "<Response [200 OK]>" and contents["data"] is not None:
         return contents["data"]["profile"]["handle"]
-
     return None
 
 
@@ -29,14 +28,13 @@ async def verify_rsi_handle(rsi_handle, verification_code):
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(url)
-    except httpx.ReadTimeout as error:
+    except httpx.ReadTimeout as exc:
+        print(exc)
         return None
     contents = response.json()
     if contents["data"] is not None:
         if verification_code in contents["data"]["profile"]["bio"]:
             return True
-    else:
-        return False
     return False
 
 
@@ -63,7 +61,7 @@ async def get_user_membership_info(rsi_handle):
             else:
                 membership["main_member"] = False
                 membership["member_rank"] = contents["data"]["organization"]["stars"]
-        except TypeError as error:
+        except TypeError as exc:
+            print(exc)
             return None
-
     return membership

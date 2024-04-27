@@ -1,9 +1,9 @@
 """
 All User Slash Commands for Astral Admin
 """
-import discord
 import random
 import string
+import discord
 
 from discord.ext import commands
 
@@ -86,7 +86,7 @@ class SlashCommands(commands.Cog):
                             "There has been an error. Please contact a server Admin."
                         )
 
-                if user_info["user_verification_progress"] == 1:                   
+                if user_info["user_verification_progress"] == 1:    
                     # The user has begun the process and needs verification
                     if await rsi_lookup.verify_rsi_handle(rsi_handle=user_info["user_rsi_handle"],
                                                           verification_code=user_info["user_verification_code"]):
@@ -97,13 +97,13 @@ class SlashCommands(commands.Cog):
                                                                                     guild_id=guild_id,
                                                                                     guild_verification_status=True)
                         user_list = []
-                        await update_user_roles(user_list=user_list.append(user_info), bot=self.bot, ctx=ctx)
+                        await update_user_roles(self, user_list=user_list.append(user_info), bot=self.bot, ctx=ctx)
                         await ctx.followup.send(
                             f"Thank you {rsi_handle}, your Discord and RSI Accounts are now symbollically bound."
                             + "\n\nYou will not be able to access any more of the server unless you are a "
                             + "Member or Affiliate of Astral Dynamics."
                         )
-                    
+
                     else:
                         await ctx.followup.send(
                             "Please make sure that you have added your verification code to your RSI Short Bio:" +
@@ -151,7 +151,7 @@ class SlashCommands(commands.Cog):
 
         await update_user_roles.update_user_roles(self, user_list=user_list, bot=self.bot, ctx=ctx)
 
-        await ctx.respond("Discord Member Roles Updated.", 
+        await ctx.respond("Discord Member Roles Updated.",
                     ephemeral=True)
 
     @commands.slash_command(
@@ -170,7 +170,7 @@ class SlashCommands(commands.Cog):
         else:
             await ctx.respond("The Discord server failed to be added to the Database",
                               ephemeral=True)
-    
+
     @commands.slash_command(
             name="del-guild", description="Delete the Discord Guild from the DB."
     )

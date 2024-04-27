@@ -26,6 +26,7 @@ class SlashCommands(commands.Cog):
         """
         await ctx.respond("Pong!", ephemeral=True)
 
+    # pylint: disable=no-member
     @commands.slash_command(
         name="bind-rsi-account", description="Bind your Discord and RSI Accounts"
     )
@@ -155,6 +156,7 @@ class SlashCommands(commands.Cog):
         await ctx.respond("Discord Member Roles Updated.",
                     ephemeral=True)
 
+    # pylint: disable=no-member
     @commands.slash_command(
         name="add-guild", description="Add the Discord Guild to the DB."
     )

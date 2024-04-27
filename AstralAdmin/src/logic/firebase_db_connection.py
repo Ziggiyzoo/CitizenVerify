@@ -98,6 +98,7 @@ async def update_user_verification_status(author_id: str,
         print(exc)
         return False
 
+# pylint: disable=no-member
 async def update_user_guild_verification(author_id: str,
                                          guild_id: str,
                                          guild_verification_status: bool):

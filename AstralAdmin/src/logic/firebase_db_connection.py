@@ -1,8 +1,8 @@
 """
 Astral Admin database connection.
 """
-import datetime
 import os
+import json
 
 import firebase_admin
 from firebase_admin import credentials, firestore, exceptions
@@ -18,7 +18,7 @@ def _get_firebase_secret_path() -> str:
     else:
         return "/var/secrets/firebase_secret.json"
 
-cred: credentials.Certificate = credentials.Certificate(_get_firebase_secret_path())
+cred: credentials.Certificate = credentials.Certificate(json.loads(environ["FIREBASE_SECRET"]))
 
 firebase_admin.initialize_app(cred)
 db = firestore.client()
@@ -159,10 +159,10 @@ async def get_guild_members(guild_id: str):
     Get a list of verified Guild Members
     """ 
     try:
-       guild_member_info = guilds_col.document(f"{guild_id}").collection("members").select(field_paths=[])
+       guild_member_info = guilds_col.document(f"{guild_id}").collection("members").select(field_paths=[]).get()
     except exceptions.FirebaseError as exc:
         return None
-    if guild_member_info.exists:
+    if guild_member_info is not None:
         guild_members = [member.id for member in guild_member_info]
         return guild_members
     else:

@@ -91,6 +91,8 @@ class SlashCommands(commands.Cog):
                         await update_user_roles(user_list=user_list.append(user_info), bot=self.bot, ctx=ctx)
                         await ctx.followup.send(
                             f"Thank you {rsi_handle}, your Discord and RSI Accounts are now symbollically bound."
+                            + "\n\nYou will not be able to access any more of the server unless you are a Member or Affiliate "
+                            + "of Astral Dynamics."
                         )
                     
                     else:
@@ -107,6 +109,18 @@ class SlashCommands(commands.Cog):
                         "\nIf you haven't already, sign up for a position at Astral Dynamics!" +
                         "\nhttps://robertsspaceindustries.com/orgs/ASTDYN"
                     )
+
+    @commands.slash_command(
+            name="apply-now", description="Assistance with applying to the Astral Dynamics Organistation."
+    )
+    async def apply_now(self, ctx):
+        """
+        Send the user instructions on how to apply to Astral Dynamics.
+        """
+        ctx.respond("Hi there " + ctx.author_id + ". To Apply to Astral Dynamics please use this link:"
+                    + "\n\nhttps://robertsspaceindustries.com/orgs/ASTDYN"
+                    + "\n\nOnce you have done this please @ mention Human Resources.",
+                    ephemeral=True)
 
     @commands.slash_command(
         name="update-roles", description="Update the roles of bound members on the discord."
@@ -126,12 +140,12 @@ class SlashCommands(commands.Cog):
                 await firebase_db_connection.get_user(author_id=str(member_id))
             )
 
-        await update_user_roles.update_user_roles(user_list=user_list, bot=self.bot, ctx=ctx)
+        await update_user_roles.update_user_roles(self, user_list=user_list, bot=self.bot, ctx=ctx)
 
         await ctx.respond("Discord Member Roles Updated.", 
                     ephemeral=True)
 
-    @commands.slash_commands(
+    @commands.slash_command(
         name="add-guild", description="Add the Discord Guild to the DB."
     )
     @commands.has_permissions(administrator=True)

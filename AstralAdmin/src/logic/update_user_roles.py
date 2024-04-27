@@ -5,7 +5,7 @@ import discord
 
 from src.logic import rsi_lookup
 
-async def update_user_roles(user_list, bot: discord.bot, ctx):
+async def update_user_roles(self, user_list, bot: discord.bot, ctx):
     """
     Update the discord members roles based on the RSI site.
     """
@@ -22,8 +22,8 @@ async def update_user_roles(user_list, bot: discord.bot, ctx):
                 ]
     # Check members RSI info
     for user in user_list:
-        user_handle = user["user_rsi_handle"]
-        membership_status = await rsi_lookup.get_user_membership_info(rsi_handle=user_handle)
+        self.user_handle = user["user_rsi_handle"]
+        membership_status = await rsi_lookup.get_user_membership_info(rsi_handle=self.user_handle)
         if membership_status["main_member"] is not None:
             if membership_status["main_member"]:
                 membership_index = 0
@@ -59,10 +59,10 @@ async def update_user_roles(user_list, bot: discord.bot, ctx):
                     )
             except AttributeError as exc:
                 # Uh Oh
-                await ctx.respond("Failed to update role for User: " + str(user_handle) + ". Error: " + exc,
+                await ctx.respond("Failed to update role for User: " + self.user_handle + ". Error: " + exc,
                             ephemeral=True )
 
             except discord.DiscordException as exc:
                 # Uh Oh
-                await ctx.respond("Failed to update role for User: " + str(user_handle) + ". Error: " + str(exc),
+                await ctx.respond("Failed to update role for User: " + str(self.user_handle) + ". Error: " + str(exc),
                             ephemeral=True )

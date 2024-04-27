@@ -4,7 +4,6 @@ version = "0.1.0"
 description = "A discord bot for assisting with the verification of Star Citizens."
 authors = ["David Symons <davidsymons.w@gmail.com>"]
 readme = "README.md"
-packages = [{include = "astral_admin", from = "src"}]
 
 [tool.poetry.dependencies]
 python = ">=3.8.0,<=3.11.99"

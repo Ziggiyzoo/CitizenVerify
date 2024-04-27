@@ -14,7 +14,8 @@ COPY pyproject.toml poetry.lock ./
 RUN touch README.md
 
 RUN poetry install --without dev --no-root && rm -rf $POETRY_CACHE_DIR
+RUN poetry shell
 
 COPY AstralAdmin ./app
 
-ENTRYPOINT ["poetry", "run", "python", "-m", "main"]
+ENTRYPOINT ["poetry", "run", "python", "main.py"]

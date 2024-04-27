@@ -86,7 +86,7 @@ class SlashCommands(commands.Cog):
                             "There has been an error. Please contact a server Admin."
                         )
 
-                if user_info["user_verification_progress"] == 1:    
+                if user_info["user_verification_progress"] == 1:
                     # The user has begun the process and needs verification
                     if await rsi_lookup.verify_rsi_handle(rsi_handle=user_info["user_rsi_handle"],
                                                           verification_code=user_info["user_verification_code"]):

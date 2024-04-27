@@ -139,8 +139,7 @@ async def get_user(author_id: str):
         return None
     if user_ref.get().exists:
         return user_ref.get().to_dict()
-    else:
-        return None
+    return None
 
 async def get_user_guild(author_id: str,
                          guild_id: str):
@@ -159,7 +158,7 @@ async def get_user_guild(author_id: str,
 async def get_guild_members(guild_id: str):
     """
     Get a list of verified Guild Members
-    """ 
+    """
     try:
         guild_member_info = guilds_col.document(f"{guild_id}").collection("members").select(field_paths=[]).get()
     except exceptions.FirebaseError as exc:

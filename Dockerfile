@@ -8,4 +8,4 @@ COPY pyproject.toml ./app
 WORKDIR /app
 
 RUN poetry install --without dev
-ENTRYPOINT ["poetry", "run", "python", "-m", "/AstralAdmin/main"]
+ENTRYPOINT ["poetry", "run", "python",  "/AstralAdmin/main.py"]

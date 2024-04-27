@@ -4,6 +4,8 @@ Astral Admin Bot
 import discord
 import discord.ext.commands as ext_commands
 
+from os import environ
+
 # pylint: disable=too-many-ancestors
 class AstralAdmin(ext_commands.Bot):
     """
@@ -18,9 +20,17 @@ class AstralAdmin(ext_commands.Bot):
         Bot On Ready
         """
         # This bot currently does nothing on ready
+        info = self.bot.get_channel(1233738280118390795)
+        await info.message.send("Astral Dynamics Assistant is ready!")
 
     async def on_message(self, message):
         """
         Bot On Message
         """
         # This bot currently does nothing on message!
+
+    async def on_member_join(self, member):
+        welcome = self.bot.get_channel(1230973934048903178)
+        await welcome.message.send("Welcome to the Astral Dynamics Discord " + member.id
+                                   + ". Please use the /bind-rsi-account so I may begin to"
+                                   + " assist you through your application")

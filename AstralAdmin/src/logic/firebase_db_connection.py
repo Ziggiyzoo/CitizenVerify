@@ -26,7 +26,7 @@ db = firestore.client()
 users_col = db.collection("users")
 guilds_col = db.collection("guilds")
 
-async def put_new_user(author_id: int, guild_id: int, user_verification_code: str, rsi_handle: str):
+async def put_new_user(author_id: str, guild_id: str, user_verification_code: str, rsi_handle: str):
     """
     Add New User to the DB
     """
@@ -54,7 +54,7 @@ async def put_new_user(author_id: int, guild_id: int, user_verification_code: st
     except exceptions.FirebaseError as exc:
         return False
 
-async def put_new_guild(guild_id: int, guild_name: str, spectrum_id:str):
+async def put_new_guild(guild_id: str, guild_name: str, spectrum_id:str):
     """
     Add New Guild to the DB
     """
@@ -71,7 +71,7 @@ async def put_new_guild(guild_id: int, guild_name: str, spectrum_id:str):
     except exceptions.FirebaseError as exc:
         return False
     
-async def del_guild(guild_id: int):
+async def del_guild(guild_id: str):
     """
     Delete Guild from the DB
     """
@@ -101,7 +101,7 @@ async def update_user_verification_status(author_id: str, user_verification_prog
 
 async def update_user_guild_verification(author_id: str, guild_id: str, guild_verification_status: bool):
     """
-    Update User Doc with Guild Verification Info
+    Update User Doc with time of  Guild Verification Info
     """
     user_guild_ref = users_col.document(f"{author_id}").collection("user_guilds").document(f"{guild_id}")
     guild_ref = guilds_col.document(f"{guild_id}").collection("members").document(f"{author_id}")
@@ -133,7 +133,6 @@ async def get_user(author_id: str):
     try:
         user_ref = users_col.document(f"{author_id}")
     except exceptions.FirebaseError as exc:
-        print(exc)
         return None
     
     if user_ref.get().exists:
@@ -155,7 +154,16 @@ async def get_user_guild(author_id: str, guild_id: str):
     else:
         return None
 
-async def get_verified_guild_members(guild_id: int):
+async def get_guild_members(guild_id: str):
     """
     Get a list of verified Guild Members
-    """
+    """ 
+    try:
+       guild_member_info = guilds_col.document(f"{guild_id}").collection("members").select(field_paths=[])
+    except exceptions.FirebaseError as exc:
+        return None
+    if guild_member_info.exists:
+        guild_members = [member.id for member in guild_member_info]
+        return guild_members
+    else:
+        return None

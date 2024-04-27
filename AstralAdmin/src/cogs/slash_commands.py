@@ -2,13 +2,12 @@
 All User Slash Commands for Astral Admin
 """
 import discord
-import datetime
 import random
 import string
 
 from discord.ext import commands
 
-from src.logic import firebase_db_connection, rsi_lookup
+from src.logic import firebase_db_connection, rsi_lookup, update_user_roles
 
 class SlashCommands(commands.Cog):
     """
@@ -88,6 +87,8 @@ class SlashCommands(commands.Cog):
                     if await rsi_lookup.verify_rsi_handle(rsi_handle=user_info["user_rsi_handle"], verification_code=user_info["user_verification_code"]):
                         await firebase_db_connection.update_user_verification_status(author_id=author_id, user_verification_progress=2, user_verification_status=True)
                         await firebase_db_connection.update_user_guild_verification(author_id=author_id, guild_id=guild_id, guild_verification_status=True)
+                        user_list = []
+                        await update_user_roles(user_list=user_list.append(user_info), bot=self.bot, ctx=ctx)
                         await ctx.followup.send(
                             f"Thank you {rsi_handle}, your Discord and RSI Accounts are now symbollically bound."
                         )
@@ -116,7 +117,19 @@ class SlashCommands(commands.Cog):
         Admin only command to trigger the update of Discord roles based of the RSI Org page.
         """
         # Get list of verified members in the guild
-        self.verified_members = await firebase_db_connection.get_guild_verified_members(guild_id=ctx.guild_id)
+        guild_members = await firebase_db_connection.get_guild_members(guild_id=str(ctx.guild_id))
+
+        # Get verified member info
+        user_list = []
+        for member_id in guild_members:
+            user_list.append(
+                await firebase_db_connection.get_user(author_id=str(member_id))
+            )
+
+        await update_user_roles.update_user_roles(user_list=user_list, bot=self.bot, ctx=ctx)
+
+        await ctx.respond("Discord Member Roles Updated.", 
+                    ephemeral=True)
 
     @commands.slash_commands(
         name="add-guild", description="Add the Discord Guild to the DB."
@@ -127,7 +140,7 @@ class SlashCommands(commands.Cog):
         Admin only command to add the guild to the DB
         """
         if await firebase_db_connection.put_new_guild(
-            ctx.guild_id, ctx.guild.name, spectrum_id
+            str(ctx.guild_id), ctx.guild.name, spectrum_id
             ):
             await ctx.respond("This Discord server has been added to the Database.",
                               ephemeral=True)
@@ -143,7 +156,7 @@ class SlashCommands(commands.Cog):
         """
         Admin only command to delete the Discord Guild from the DB
         """
-        if await firebase_db_connection.del_guild(guild_id=ctx.guild_id):
+        if await firebase_db_connection.del_guild(guild_id=str(ctx.guild_id)):
             await ctx.respond("The Discord server has been removed from the Database",
                                 ephemeral=True)
         else:

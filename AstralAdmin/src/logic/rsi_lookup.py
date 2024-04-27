@@ -57,7 +57,7 @@ async def get_user_membership_info(rsi_handle):
         contents = response.json()
         # Check if BRVNS is the main ORG
         try:
-            if contents["data"]["organization"]["name"] == "Blue Ravens Inc":
+            if contents["data"]["organization"]["name"] == "Astral Dynamics":
                 membership["main_member"] = True
                 membership["member_rank"] = contents["data"]["organization"]["stars"]
             else:

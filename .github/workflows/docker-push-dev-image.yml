@@ -26,7 +26,7 @@ jobs:
         id: meta
         uses: docker/setup-buildx-action@v3
         with:
-          images: ziggiyzoo/ziggiyzoo-private
+          images: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -37,3 +37,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_REPO }}:develop
           labels: ${{ steps.meta.outputs.labels }}
+          secrets: |
+            "TOKEN=${{secrets.DEV_TOKEN}}"
+            "SC_API_KEY=${{secrets.SC_API_KEY}}"
+            "FIREBASE_SECRET=${{secrets.FIREBASE_SECRET}}"

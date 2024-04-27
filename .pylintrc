@@ -2,4 +2,4 @@
 max-line-length=120
 
 [TYPECHECK]
-generated-members=discord.Options,firebase_admin.firestore.SERVER_TIMESTAMPS
+generated-members=["discord.Options","firebase_admin.firestore.SERVER_TIMESTAMPS"]

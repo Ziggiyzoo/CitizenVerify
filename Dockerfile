@@ -17,4 +17,4 @@ RUN poetry install --without dev --no-root && rm -rf $POETRY_CACHE_DIR
 
 COPY AstralAdmin ./app
 
-ENTRYPOINT ["poetry", "run", "python", "main"]
+ENTRYPOINT ["poetry", "run", "python", "-m", "main"]

@@ -39,7 +39,7 @@ class SlashCommands(commands.Cog):
 
         await ctx.defer(ephemeral=True)
 
-        if rsi_handle == None:
+        if rsi_handle is not None:
             await ctx.followup.send(
                 "Please input your RSI Handle."
             )
@@ -191,4 +191,3 @@ def setup(bot):
     Add cog to bot
     """
     bot.add_cog(SlashCommands(bot))
-    

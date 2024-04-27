@@ -2,4 +2,4 @@
 max-line-length=120
 
 [TYPECHECK]
-ignore-on-opaque-interference=no
+ignore-on-opaque-inference=no

@@ -14,7 +14,10 @@ db = firestore.client()
 users_col = db.collection("users")
 guilds_col = db.collection("guilds")
 
-async def put_new_user(author_id: str, guild_id: str, user_verification_code: str, rsi_handle: str):
+async def put_new_user(author_id: str,
+                       guild_id: str,
+                       user_verification_code: str,
+                       rsi_handle: str):
     """
     Add New User to the DB
     """
@@ -40,9 +43,12 @@ async def put_new_user(author_id: str, guild_id: str, user_verification_code: st
         )
         return True
     except exceptions.FirebaseError as exc:
+        print(exc)
         return False
 
-async def put_new_guild(guild_id: str, guild_name: str, spectrum_id:str):
+async def put_new_guild(guild_id: str,
+                        guild_name: str,
+                        spectrum_id:str):
     """
     Add New Guild to the DB
     """
@@ -72,7 +78,9 @@ async def del_guild(guild_id: str):
         print(exc)
         return False
 
-async def update_user_verification_status(author_id: str, user_verification_progress: int, user_verification_status: bool):
+async def update_user_verification_status(author_id: str,
+                                          user_verification_progress: int,
+                                          user_verification_status: bool):
     """
     Update User Doc with Verification info
     """
@@ -90,7 +98,9 @@ async def update_user_verification_status(author_id: str, user_verification_prog
         print(exc)
         return False
 
-async def update_user_guild_verification(author_id: str, guild_id: str, guild_verification_status: bool):
+async def update_user_guild_verification(author_id: str,
+                                         guild_id: str,
+                                         guild_verification_status: bool):
     """
     Update User Doc with time of  Guild Verification Info
     """
@@ -126,13 +136,14 @@ async def get_user(author_id: str):
         user_ref = users_col.document(f"{author_id}")
     except exceptions.FirebaseError as exc:
         print(exc)
-        return None 
+        return None
     if user_ref.get().exists:
         return user_ref.get().to_dict()
     else:
         return None
 
-async def get_user_guild(author_id: str, guild_id: str):
+async def get_user_guild(author_id: str,
+                         guild_id: str):
     """
     Get the Users Guild Info
     """
@@ -141,7 +152,6 @@ async def get_user_guild(author_id: str, guild_id: str):
     except exceptions.FirebaseError as exc:
         print(exc)
         return None
-
     if user_ref.get().exists:
         return user_ref.get().to_dict()
     return None

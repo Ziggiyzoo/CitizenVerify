@@ -2,18 +2,18 @@ FROM arm64v8/python:3.11.8-slim-bullseye
 
 RUN pip install poetry
 
-ARG TOKEN
-ENV TOKEN=$TOKEN
+ARG token
+ENV TOKEN=$token
 
 RUN echo $TOKEN
 
-ARG SC_API_KEY
-ENV SC_API_KEY=$SC_API_KEY
+ARG sc_api_key
+ENV SC_API_KEY=$sc_api_key
 
 RUN echo $SC_API_KEY
 
-ARG FIREBASE_SECRET
-ENV FIREBASE_SECRET=$FIREBASE_SECRET
+ARG fireebase_secret
+ENV FIREBASE_SECRET=$fireebase_secret
 
 RUN echo $FIREBASE_SECRET
 

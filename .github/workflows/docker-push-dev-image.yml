@@ -30,6 +30,10 @@ jobs:
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
+        env:
+          TOKEN: ${{secrets.DEV_TOKEN}}
+          SC_API_KEY: ${{secrets.SC_API_KEY}}
+          FIREBASE_SECRET: ${{secrets.FIREBASE_SECRET}}
 
         with:
           context: .

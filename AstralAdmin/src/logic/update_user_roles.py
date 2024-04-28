@@ -60,8 +60,12 @@ async def update_user_roles(self, user_list, bot: discord.bot, ctx):
                     )
             except AttributeError as exc:
                 # Uh Oh
-                await ctx.followup.send("Failed to update role for User: " + self.user_handle + ". Error: " + str(exc))
+                await ctx.followup.send("Failed to update role for User: "
+                                        + self.user_handle
+                                        + ". Error: " + str(exc))
 
             except discord.DiscordException as exc:
                 # Uh Oh
-                await ctx.followup.send("Failed to update role for User: " + str(self.user_handle) + ". Error: " + str(exc))
+                await ctx.followup.send("Failed to update role for User: "
+                                        + str(self.user_handle)
+                                        + ". Error: " + str(exc))

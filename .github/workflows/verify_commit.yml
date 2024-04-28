@@ -1,0 +1,171 @@
+name: Verify Commit
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - production
+      - develop
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  lint_application:
+    name: "Lint the Project"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ "3.11" ]
+        poetry-version: [ "1.8.2" ]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Load cached Poetry installation
+        uses: actions/cache@v2
+        with:
+          path: ~/.local
+          key: poetry-0  # increment to reset cache
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: ${{ matrix.poetry-version }}
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: |
+          ls
+          poetry install
+
+      - name: Analyse the code with pylint
+        run: |
+          poetry run pylint $(git ls-files '*.py')
+
+  test_application:
+    name: "Test the Project"
+    needs:
+      - lint_application
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ "3.11" ]
+        poetry-version: [ "1.8.2" ]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Load cached Poetry installation
+        uses: actions/cache@v2
+        with:
+          path: ~/.local
+          key: poetry-0  # increment to reset cache
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: ${{ matrix.poetry-version }}
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: |
+          poetry install
+
+      - name: Run Unit Tests
+        env:
+          TOKEN: ${{ secrets.TEST_DISCORDTOKEN }}
+          SC_API_KEY: ${{ secrets.SC_API_KEY }}
+
+        run: |
+          poetry run python -m pytest
+
+  run_application:
+    name: "Run the Project"
+    needs:
+      - lint_application
+      - test_application
+    strategy:
+      matrix:
+        python-version: [ "3.11" ]
+        poetry-version: [ "1.8.2" ]
+        # os: [ ubuntu-latest, windows-latest ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set Variables
+        id: variables
+        env:
+          FIREBASE_SECRET: ${{ secrets.FIREBASE_SECRET }}
+        run: |
+          echo "datetime=$(date +%Y%m%dT%H%M%SZ)" >> $GITHUB_OUTPUT
+          echo "userid=$(id -u)" >> $GITHUB_OUTPUT
+          echo "groupid=$(id -g)" >> $GITHUB_OUTPUT
+          echo "${FIREBASE_SECRET}" > $(pwd)/firebase_secret.json
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Load cached Poetry installation
+        uses: actions/cache@v2
+        with:
+          path: ~/.local
+          key: poetry-0  # increment to reset cache
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: ${{ matrix.poetry-version }}
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: |
+          poetry install
+
+      - name: Run application
+        env:
+          TOKEN: ${{ secrets.TEST_DISCORDTOKEN }}
+          SC_API_KEY: ${{ secrets.SC_API_KEY }}
+        timeout-minutes: 2
+        continue-on-error: true
+        run: |
+          poetry run python /AstralAdmin/main.py

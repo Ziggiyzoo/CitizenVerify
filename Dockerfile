@@ -2,9 +2,12 @@ FROM arm64v8/python:3.11.8-slim-bullseye
 
 RUN pip install poetry
 
-RUN --mount=type=secret,id=TOKEN \
-    --mount=type=secret,id=SC_API_KEY \
-    --mount=type=secret,id=FIRESTORE_SECRET
+RUN --mount type=secret,id=TOKEN \
+    TOKEN=$(cat /run/secrets/TOKEN) \
+    --mount type=secret,id=SC_API_KEY \
+    SC_API_KEY=$(cat /run/secrets/SC_API_KEY) \
+    --mount type=secret,id=FIRESTORE_SECRET \
+    FIRESTORE_SECRET=$(cat /run/secrets/FIRESTORE_SECRET)
 
 ENV POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \

@@ -30,11 +30,6 @@ jobs:
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
-        env:
-          TOKEN: ${{secrets.TEST}}
-          SC_API_KEY: ${{secrets.TEST}}
-          FIREBASE_SECRET: ${{secrets.TEST}}
-
         with:
           context: .
           file: ./Dockerfile
@@ -42,4 +37,9 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_REPO }}:develop
           labels: ${{ steps.meta.outputs.labels }}
+          secrets: |
+            TOKEN=${{ secrets.TEST_SECRETS_SECRET }}
+            SC_API_KEY=${{ secrets.TEST_SECRETS_SECRET }}
+            FIREBASE_SECRET=${{ secrets.TEST_SECRETS_SECRET }}
+
             

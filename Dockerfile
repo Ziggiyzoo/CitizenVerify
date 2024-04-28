@@ -2,7 +2,7 @@ FROM arm64v8/python:3.11.8-slim-bullseye
 
 RUN pip install poetry
 
-RUN --mount=trye=secret,id=TOKEN \
+RUN --mount=type=secret,id=TOKEN \
     --mount=type=secret,id=SC_API_KEY \
     --mount=type=secret,id=FIRESTORE_SECRET
 

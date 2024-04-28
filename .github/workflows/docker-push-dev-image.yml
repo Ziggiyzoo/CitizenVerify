@@ -8,19 +8,40 @@ on:
 jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Login to Docker Hub
-        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Docker Image
-        run: docker build . --build-arg token="${{ secrets.TEST_SECRETS_SECRET }}" --build-arg sc_api_key="${{ secrets.TEST_SECRETS_SECRET }}" --build-arg firebase_secret="${{ secrets.TEST_SECRETS_SECRET }}" --tag "${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_REPO }}:develop" --push --platform linux/aarch64
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/setup-buildx-action@v3
+        with:
+          images: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
 
-      # - name: Push Docker Image
-      #   run: docker push ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_REPO }}:develop
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
 
+
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/aarch64
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_REPO }}:develop
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args:
+            TOKEN=${{ secrets.TEST_SECRETS_SECRET }}
+            SC_API_KEY=${{ secrets.TEST_SECRETS_SECRET }}
+            FIREBASE_SECRET=${{ secrets.TEST_SECRETS_SECRET }}
 
             

@@ -8,8 +8,8 @@ RUN --mount=type=secret,id=TOKEN \
 RUN --mount=type=secret,id=SC_API_KEY \
     SC_API_KEY=$(cat /run/secrets/SC_API_KEY) 
 
-RUN --mount=type=secret,id=FIRESTORE_SECRET \
-    FIRESTORE_SECRET=$(cat /run/secrets/FIRESTORE_SECRET)
+RUN --mount=type=secret,id=FIREBASE_SECRET \
+    FIREBASE_SECRET=$(cat /run/secrets/FIREBASE_SECRET)
 
 ENV POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \

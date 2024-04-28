@@ -17,7 +17,7 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker Image
-        run: docker build . --build-arg token="${{ secrets.TEST_SECRETS_SECRET }}" --build-arg sc_api_key="${{ secrets.TEST_SECRETS_SECRET }}" --build-arg firebase_secret="${{ secrets.TEST_SECRETS_SECRET }}" --tag "${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_REPO }}:develop" --push
+        run: docker build . --build-arg token="${{ secrets.TEST_SECRETS_SECRET }}" --build-arg sc_api_key="${{ secrets.TEST_SECRETS_SECRET }}" --build-arg firebase_secret="${{ secrets.TEST_SECRETS_SECRET }}" --tag "${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_REPO }}:develop" --push --platform linux/aarch64
 
       # - name: Push Docker Image
       #   run: docker push ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_REPO }}:develop

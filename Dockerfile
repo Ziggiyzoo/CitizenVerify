@@ -8,7 +8,6 @@ ENV POETRY_NO_INTERACTION=1 \
     POETRY_CACHE_DIR=/tmp/poetry_cache
 
 RUN mkdir -p ./app
-WORKDIR /app
 
 COPY pyproject.toml poetry.lock ./
 RUN touch README.md
@@ -17,5 +16,7 @@ RUN poetry install --without dev --no-root && rm -rf $POETRY_CACHE_DIR
 
 COPY AstralAdmin ./app
 RUN ls ./app
+
+WORKDIR /app
 
 ENTRYPOINT ["poetry", "run", "python", "main.py"]

@@ -32,6 +32,6 @@ class AstralAdmin(ext_commands.Bot):
         Send Message to New Member
         """
         welcome = self.get_channel(1230973934048903178)
-        await welcome.send("Welcome to the Astral Dynamics Discord " + member.id
+        await welcome.send("Welcome to the Astral Dynamics Discord " + str(member.name)
                                    + ". Please use the /bind-rsi-account so I may begin to"
                                    + " assist you through your application to Astral Dynamics.")

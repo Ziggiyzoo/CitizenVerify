@@ -13,9 +13,9 @@ async def update_user_roles(self, user_list, bot: discord.bot, ctx):
                         "Astral Dynamics Affiliate"
                     ]
     rank_list = [
-                "Affiliate",
-                "Junior",
-                "Senior",
+                "Affiliates",
+                "Juniors",
+                "Seniors",
                 "Managers",
                 "Directors",
                 "Board Members"
@@ -30,7 +30,6 @@ async def update_user_roles(self, user_list, bot: discord.bot, ctx):
             else:
                 membership_index = 1
 
-            rank_index = int(membership_status["member_rank"])
 
             # Update Discord user roles
             try:
@@ -43,7 +42,9 @@ async def update_user_roles(self, user_list, bot: discord.bot, ctx):
                         discord.utils.get(
                             guild.roles, name=membership_list[membership_index]
                         ),
-                        discord.utils.get(guild.roles, name=rank_list[rank_index]),
+                        discord.utils.get(
+                            guild.roles, name=rank_list[int(membership_status["member_rank"])]
+                        ),
                     ]
                 )
                 await user.remove_roles(
@@ -54,15 +55,13 @@ async def update_user_roles(self, user_list, bot: discord.bot, ctx):
                 for i in [1, 2, 3, 4, 5]:
                     await user.remove_roles(
                         discord.utils.get(
-                            guild.roles, name=rank_list[rank_index - i]
+                            guild.roles, name=rank_list[int(membership_status["member_rank"]) - i]
                         )
                     )
             except AttributeError as exc:
                 # Uh Oh
-                await ctx.respond("Failed to update role for User: " + self.user_handle + ". Error: " + exc,
-                            ephemeral=True )
+                await ctx.followup.send("Failed to update role for User: " + self.user_handle + ". Error: " + str(exc))
 
             except discord.DiscordException as exc:
                 # Uh Oh
-                await ctx.respond("Failed to update role for User: " + str(self.user_handle) + ". Error: " + str(exc),
-                            ephemeral=True )
+                await ctx.followup.send("Failed to update role for User: " + str(self.user_handle) + ". Error: " + str(exc))

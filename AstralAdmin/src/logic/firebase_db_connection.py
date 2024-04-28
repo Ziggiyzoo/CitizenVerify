@@ -163,7 +163,7 @@ async def get_guild_members(guild_id: str):
     try:
         guild_member_info = guilds_col.document(f"{guild_id}").collection("members").select(field_paths=[]).get()
     except exceptions.FirebaseError as exc:
-        print(exc)
+        print("ERROR IN DB CONNECTION: " + str(exc))
         return None
     if guild_member_info is not None:
         guild_members = [member.id for member in guild_member_info]

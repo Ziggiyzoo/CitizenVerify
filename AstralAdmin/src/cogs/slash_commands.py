@@ -40,7 +40,7 @@ class SlashCommands(commands.Cog):
 
         await ctx.defer(ephemeral=True)
 
-        if rsi_handle is not None:
+        if rsi_handle is None:
             await ctx.followup.send(
                 "Please input your RSI Handle."
             )
@@ -51,7 +51,6 @@ class SlashCommands(commands.Cog):
         else:
             # Check if the user exists
             user_info = await firebase_db_connection.get_user(author_id=author_id)
-            print(user_info)
             if user_info is None:
                 # The did not exist. Create them.
                 code = "".join([random.choice(string.ascii_letters) for n in range(10)])
@@ -103,8 +102,13 @@ class SlashCommands(commands.Cog):
                         await ctx.followup.send(
                             f"Thank you {rsi_handle}, your Discord and RSI Accounts are now symbollically bound."
                             + "\n\nYou will not be able to access any more of the server unless you are a "
-                            + "Member or Affiliate of Astral Dynamics."
+                            + "Member or Affiliate of Astral Dynamics.",
+                            ephemeral=True
                         )
+                        try:
+                            await ctx.author.edit(nick=user_info["user_rsi_handle"])
+                        except discord.errors.Forbidden as exc:
+                            print(exc)
 
                     else:
                         await ctx.followup.send(
@@ -141,19 +145,25 @@ class SlashCommands(commands.Cog):
         """
         Admin only command to trigger the update of Discord roles based of the RSI Org page.
         """
+        # Defer
+        await ctx.defer(ephemeral=True)
+
         # Get list of verified members in the guild
         guild_members = await firebase_db_connection.get_guild_members(guild_id=str(ctx.guild_id))
 
         # Get verified member info
         user_list = []
-        for member_id in guild_members:
-            user_list.append(
-                await firebase_db_connection.get_user(author_id=str(member_id))
-            )
+        try:
+            for member_id in guild_members:
+                user_list.append(
+                    await firebase_db_connection.get_user(author_id=str(member_id))
+                )
+        except Exception as exc:
+            print("FAILED CREATING USER LIST: " + str(exc))
 
         await update_user_roles.update_user_roles(self, user_list=user_list, bot=self.bot, ctx=ctx)
 
-        await ctx.respond("Discord Member Roles Updated.",
+        await ctx.followup.send("Discord Member Roles Updated.",
                     ephemeral=True)
 
     # pylint: disable=no-member

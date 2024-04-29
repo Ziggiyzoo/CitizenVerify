@@ -8,7 +8,7 @@ ENV TOKEN=$token
 ARG sc_api_key
 ENV SC_API_KEY=$sc_api_key
 
-ARG fireebase_secret
+ARG firebase_secret
 ENV FIREBASE_SECRET=$firebase_secret
 
 ENV POETRY_NO_INTERACTION=1 \

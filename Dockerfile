@@ -13,7 +13,7 @@ ENV SC_API_KEY=$sc_api_key
 RUN echo $SC_API_KEY
 
 ARG fireebase_secret
-ENV FIREBASE_SECRET=$fireebase_secret
+ENV FIREBASE_SECRET=$firebase_secret
 
 RUN echo $FIREBASE_SECRET
 

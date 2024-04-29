@@ -5,17 +5,11 @@ RUN pip install poetry
 ARG token
 ENV TOKEN=$token
 
-RUN echo $TOKEN
-
 ARG sc_api_key
 ENV SC_API_KEY=$sc_api_key
 
-RUN echo $SC_API_KEY
-
 ARG fireebase_secret
 ENV FIREBASE_SECRET=$firebase_secret
-
-RUN echo $FIREBASE_SECRET
 
 ENV POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \

@@ -38,8 +38,8 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_REPO }}:develop
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-              token=${{ secrets.TEST_SECRETS_SECRET }}
-              ac_api_key=${{ secrets.TEST_SECRETS_SECRET }}
-              firebase_secret=${{ secrets.TEST_SECRETS_SECRET }}
+              token=${{ secrets.TOKEN }}
+              ac_api_key=${{ secrets.SC_API_KEY }}
+              firebase_secret=${{ secrets.FIREBASE_SECRET }}
 
             

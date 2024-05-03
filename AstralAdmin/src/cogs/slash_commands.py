@@ -198,6 +198,22 @@ class SlashCommands(commands.Cog):
         else:
             ctx.respond("The Discord server failed to be removed from the Database",
                         ephemeral=True)
+            
+    @commands.slash_command(
+        name="test-embed", description="Test Me"
+    )
+    async def test_embed(self, ctx):
+        embed = discord.Embed(
+            title="Welcome to Astral Admin",
+            color=discord.Colour.blue()
+        )
+        embed.add_field(name="Welcome", 
+                        value=f"Greetings {ctx.author.mention}" + ", and welcome to the Astral Dynamics Discord.",
+                        inline=False)
+        embed.add_field(name="Organisation Overview",
+                        value="\n***Astral Dynamics focuses on providing Resource Acquisition, Processing & Delivery in a Secure and Timely manner.***",
+                        inline=False)
+        await ctx.respond(embed=embed, ephemeral=True)
 
 def setup(bot):
     """

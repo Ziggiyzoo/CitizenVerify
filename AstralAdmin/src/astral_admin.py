@@ -34,16 +34,15 @@ class AstralAdmin(ext_commands.Bot):
         welcome = self.get_channel(1230973934048903178)
 
         embed = discord.Embed(
-            title="Welcome to Astral Dynamics",
+            title="Welcome to Astral Admin",
+            description=f"Greetings {member.mention}, and welcome to the Astral Dynamics Discord.",
             color=discord.Colour.blue()
         )
-        embed.add_field(name="Welcome", 
-                        value=f"Greetings {member.mention}" + ", and welcome to the Astral Dynamics Discord.",
-                        inline=False)
+        embed.add_field(name="APPLY NOW",
+                        value="To **Apply** to Astral Dynamics & gain access to the Discord Server, click [**here**](https://robertsspaceindustries.com/orgs/ASTDYN/)")
+        embed.add_field(name="REGISTER WITH OUR ADMIN ASSISTANT",
+                        value=f"Please make your way to {welcome.mention} and utilise the `/bind-rsi-account` command until you have completed the process.")
         embed.add_field(name="Organisation Overview",
-                        value="***Astral Dynamics focuses on providing Resource Acquisition, Processing & Delivery in a Secure and Timely manner.***",
+                        value="\n*Astral Dynamics focuses on providing* ***Resource Acquisition***, ***Processing & Delivery*** *in a* ***Secure*** *and* ***Timely*** *Manner*.",
                         inline=False)
-        embed.add_field(name="Hyperlink",
-                        value="[here](your_link)"
-                        )
-        await welcome.send(embed=embed)
+        await welcome.send(embed=embed, ephemeral=True)

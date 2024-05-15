@@ -170,27 +170,6 @@ class SlashCommands(commands.Cog):
         else:
             ctx.respond("The Discord server failed to be removed from the Database",
                         ephemeral=True)
-            
-    @commands.slash_command(
-        name="test-embed", description="Test Me"
-    )
-    async def test_embed(self, ctx):
-        embed = discord.Embed(
-            title="Welcome to Astral Admin",
-            color=discord.Colour.blue()
-        )
-        embed.add_field(name="Welcome", 
-                        value=f"Greetings {ctx.author.mention}" + ", and welcome to the Astral Dynamics Discord.",
-                        inline=False)
-        embed.add_field(name="APPLY NOW",
-                        value="To **Apply** to Astral Dynamics & gain access to the Discord Server, click [here](https://robertsspaceindustries.com/orgs/ASTDYN/)")
-        embed.add_field(name="Organisation Overview",
-                        value="\n*Astral Dynamics focuses on providing* ***Resource Acquisition***, ***Processing & Delivery*** *in a* ***Secure*** *and* ***Timely*** *Manner*.",
-                        inline=False)
-        embed.add_field(name="Hyperlink",
-                        value="[here](https://robertsspaceindustries.com/orgs/ASTDYN/)",
-                        inline=False)
-        await ctx.respond(embed=embed, ephemeral=True)
 
     @commands.slash_command(
     name="update-roles", description="Update the roles of bound members on the discord."

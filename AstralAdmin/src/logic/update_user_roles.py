@@ -148,5 +148,5 @@ async def update_user_roles(user_list, bot: discord.bot, guild_id: str):
         # Uh Oh
         return "Failed to update role for User: " + user_handle + ". Error: " + str(exc)
 
-    return "Roles updated successfully for guild: " + guild.name
+    return None
             

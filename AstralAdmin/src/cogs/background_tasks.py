@@ -15,12 +15,11 @@ class BackgroundTasks(commands.Cog):
         print("Init Background Tasks")
         self.update_org_roles.start()
 
-    @tasks.loop(hours=6)
+    @tasks.loop(hours=1)
     async def update_org_roles(self):
         """
         Automatic trigger to update Discord roles based of the RSI Org page.
-        """
-        self.log_here = self.bot.get_channel(1233738280118390795)
+        """ 
         guild_ids = await firebase_db_connection.get_guild_ids()
         for guild_id in guild_ids:
             # Get list of verified members in the guild
@@ -37,8 +36,9 @@ class BackgroundTasks(commands.Cog):
                 print("FAILED CREATING USER LIST: " + str(exc))
 
             response = await update_user_roles.update_user_roles(user_list=user_list, bot=self.bot, guild_id=guild_id)
-            log_here = self.bot.get_channel(1233738280118390795)
-            await log_here.send(response)
+            if response is not None:
+                log_here = self.bot.get_channel(1233738280118390795)
+                await log_here.send(response)
 
 def setup(bot):
     """

@@ -108,6 +108,12 @@ class SlashCommands(commands.Cog):
                         )
                         try:
                             await ctx.author.edit(nick=user_info["user_display_name"])
+                            await ctx.author.add_role(
+                                discord.utils.get(
+                                    ctx.guild.roles,
+                                    name="Account Bound"
+                                )
+                            )
                         except discord.errors.Forbidden as exc:
                             print(exc)
 

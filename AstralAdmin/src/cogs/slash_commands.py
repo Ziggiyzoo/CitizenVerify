@@ -182,8 +182,13 @@ class SlashCommands(commands.Cog):
         embed.add_field(name="Welcome", 
                         value=f"Greetings {ctx.author.mention}" + ", and welcome to the Astral Dynamics Discord.",
                         inline=False)
+        embed.add_field(name="APPLY NOW",
+                        value="To **Apply** to Astral Dynamics & gain access to the Discord Server, click [here](https://robertsspaceindustries.com/orgs/ASTDYN/)")
         embed.add_field(name="Organisation Overview",
-                        value="\n***Astral Dynamics focuses on providing Resource Acquisition, Processing & Delivery in a Secure and Timely manner.***",
+                        value="\n*Astral Dynamics focuses on providing* ***Resource Acquisition***, ***Processing & Delivery*** *in a* ***Secure*** *and* ***Timely*** *Manner*.",
+                        inline=False)
+        embed.add_field(name="Hyperlink",
+                        value="[here](https://robertsspaceindustries.com/orgs/ASTDYN/)",
                         inline=False)
         await ctx.respond(embed=embed, ephemeral=True)
 

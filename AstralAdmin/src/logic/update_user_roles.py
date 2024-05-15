@@ -35,7 +35,8 @@ async def update_user_roles(user_list, bot: discord.bot, guild_id: str):
         for user in user_list:
             user_handle = user["user_rsi_handle"]
             user = await guild.fetch_member(int(user["user_id"]))
-            
+            # Get Users Roles
+            roles = [role.name for role in user.roles]
             if any(d["handle"] == user_handle for d in org_membership_list):
                 try:
                     user_membership_info = next((member for member in org_membership_list if member["handle"] == user_handle), None)
@@ -54,9 +55,6 @@ async def update_user_roles(user_list, bot: discord.bot, guild_id: str):
                     membership = "Astral Dynamics Member"
                     remove_membership = "Astral Dynamics Affiliate"
                 
-                # Get Users Roles
-                roles = [role.name for role in user.roles]
-
                 if membership not in roles:
                     print(f"Membership \n{membership} \n\nNot in roles \n{roles}")
                     # Assign the role to the user
@@ -138,7 +136,30 @@ async def update_user_roles(user_list, bot: discord.bot, guild_id: str):
                             
             else:
                 # User not in org
-                pass
+                for org_role in org_roles_list:
+                    if org_role in roles:
+                        await user.remove_roles(
+                            discord.utils.get(
+                                guild.roles,
+                                name=org_role
+                            )
+                        )
+                for rank_role in rank_list:
+                    if rank_role in roles:
+                        await user.remove_roles(
+                            discord.utils.get(
+                                guild.roles,
+                                name=rank_role
+                            )
+                        )
+                for membership_role in ["Astral Dynamics Affiliate", "Astral Dynamics Member"]:
+                    if membership_role in roles:
+                      await user.remove_roles(
+                            discord.utils.get(
+                                guild.roles,
+                                name=membership_role
+                            )
+                        )  
             
     except AttributeError as exc:
         # Uh Oh

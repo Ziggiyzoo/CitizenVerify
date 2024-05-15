@@ -187,6 +187,34 @@ class SlashCommands(commands.Cog):
                         inline=False)
         await ctx.respond(embed=embed, ephemeral=True)
 
+    @commands.slash_command(
+    name="update-roles", description="Update the roles of bound members on the discord."
+    )
+    @commands.has_permissions(administrator=True)
+    async def update_org_roles(self, ctx):
+        """
+        Admin only command to trigger the update of Discord roles based of the RSI Org page.
+        """
+        await ctx.respond("Running roles Update Now")
+        info = self.bot.get_channel(1233738280118390795)
+        guild_ids = await firebase_db_connection.get_guild_ids()
+        for guild_id in guild_ids:
+            # Get list of verified members in the guild
+            guild_members = await firebase_db_connection.get_guild_members(guild_id=guild_id)
+
+            # Get verified member info
+            user_list = []
+            try:
+                for member_id in guild_members:
+                    user_list.append(
+                        await firebase_db_connection.get_user(author_id=str(member_id))
+                    )
+            except Exception as exc:
+                print("FAILED CREATING USER LIST: " + str(exc))
+
+            response = await update_user_roles.update_user_roles(user_list=user_list, bot=self.bot, guild_id=guild_id)
+            await info.send(response)
+
 def setup(bot):
     """
     Add Cog to Bot

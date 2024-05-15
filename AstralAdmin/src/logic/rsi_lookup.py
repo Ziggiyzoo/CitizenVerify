@@ -41,7 +41,7 @@ async def get_user_info(rsi_handle: str):
     except ConnectionError as exc:
         print(exc)
         return None
-    except httpx._exceptions as exc:
+    except httpx.ReadTimeout as exc:
         print(exc)
         return None
 

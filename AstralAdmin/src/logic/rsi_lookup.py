@@ -7,66 +7,42 @@ import httpx
 
 SC_API_KEY = environ["SC_API_KEY"]
 
-async def check_rsi_handle(rsi_handle):
+
+async def get_org_membership_info(spectrum_id: str):
     """
-    Check if the given RSI handle is valid
+    Return an Orgs Membership list
     """
-    url = f"https://api.starcitizen-api.com/{SC_API_KEY}/v1/eager/user/{rsi_handle}"
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url)
-    contents = response.json()
-    if str(response) == "<Response [200 OK]>" and contents["data"] is not None:
-        return contents["data"]["profile"]["handle"]
-    return None
+    url = f"https://api.starcitizen-api.com/{SC_API_KEY}/v1/live/organization_members/{spectrum_id}"
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url)
+        if str(response) != "<Response [200 OK]>":
+            raise ConnectionError(str(response))
+    except ConnectionError as exc:
+        print(exc)
+        return None
+    except httpx._exceptions as exc:
+        print(exc)
+        return None
 
 
-async def verify_rsi_handle(rsi_handle, verification_code):
+    return response.json()
+
+async def get_user_info(rsi_handle: str):
     """
-    Get the info on the RSI Users About me.
+    Return a Users RSI Page info
     """
     url = f"https://api.starcitizen-api.com/{SC_API_KEY}/v1/eager/user/{rsi_handle}"
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(url)
-    except httpx.ReadTimeout as exc:
+        if str(response) != "<Response [200 OK]>":
+            raise ConnectionError(str(response))
+    except ConnectionError as exc:
         print(exc)
         return None
-    contents = response.json()
-    if contents["data"] is not None:
-        print(contents["data"]["profile"])
-        try:
-            if verification_code in contents["data"]["profile"]["bio"]:
-                return True
-        except KeyError as exc:
-            print(exc)
-            return False
-    return False
+    except httpx._exceptions as exc:
+        print(exc)
+        return None
 
-
-async def get_user_membership_info(rsi_handle):
-    """
-    Check if the user is a member, and check if they are a affilliate or main member.
-    """
-    url = f"https://api.starcitizen-api.com/{SC_API_KEY}/v1/eager/user/{rsi_handle}"
-    membership = {"main_member": None, "member_rank": None}
-    skip = False
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url)
-
-    if str(response) != "<Response [200 OK]>":
-        skip = True
-
-    if not skip:
-        contents = response.json()
-        # Check if BRVNS is the main ORG
-        try:
-            if contents["data"]["organization"]["name"] == "Astral Dynamics":
-                membership["main_member"] = True
-                membership["member_rank"] = contents["data"]["organization"]["stars"]
-            else:
-                membership["main_member"] = False
-                membership["member_rank"] = contents["data"]["organization"]["stars"]
-        except TypeError as exc:
-            print(exc)
-            return None
-    return membership
+    return response.json()

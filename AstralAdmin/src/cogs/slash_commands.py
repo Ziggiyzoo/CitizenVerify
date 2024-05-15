@@ -44,7 +44,8 @@ class SlashCommands(commands.Cog):
             await ctx.followup.send(
                 "Please input your RSI Handle."
             )
-        elif not await rsi_lookup.check_rsi_handle(rsi_handle=rsi_handle):
+        user =  await rsi_lookup.get_user_info(rsi_handle=rsi_handle)
+        if user is None:
             await ctx.followup.send(
                 "That RSI Handle is invalid. Please imput a correct Value"
             )
@@ -52,17 +53,17 @@ class SlashCommands(commands.Cog):
             # Check if the user exists
             user_info = await firebase_db_connection.get_user(author_id=author_id)
             if user_info is None:
-                # The did not exist. Create them.
+                # They did not exist. Create them.
                 code = "".join([random.choice(string.ascii_letters) for n in range(10)])
                 await firebase_db_connection.put_new_user(
                     author_id=str(author_id),
                     guild_id=str(guild_id),
-                    rsi_handle=rsi_handle,
+                    rsi_handle=user["data"]["profile"]["handle"],
+                    display_name=user["data"]["profile"]["display"],
                     user_verification_code=code
                 )
 
                 # Tell then user to put the code in their RSI Bio
-
                 await ctx.followup.send(
                     f"Greetings {author_name}" +
                     f", please add the following to your RSI Account's Short Bio: {code}" +
@@ -106,7 +107,7 @@ class SlashCommands(commands.Cog):
                             ephemeral=True
                         )
                         try:
-                            await ctx.author.edit(nick=user_info["user_rsi_handle"])
+                            await ctx.author.edit(nick=user_info["user_display_name"])
                         except discord.errors.Forbidden as exc:
                             print(exc)
 
@@ -136,36 +137,7 @@ class SlashCommands(commands.Cog):
                     + "\n\nhttps://robertsspaceindustries.com/orgs/ASTDYN"
                     + "\n\nOnce you have done this please @ mention Human Resources.",
                     ephemeral=True)
-
-    @commands.slash_command(
-        name="update-roles", description="Update the roles of bound members on the discord."
-    )
-    @commands.has_permissions(administrator=True)
-    async def update_org_roles(self, ctx):
-        """
-        Admin only command to trigger the update of Discord roles based of the RSI Org page.
-        """
-        # Defer
-        await ctx.defer(ephemeral=True)
-
-        # Get list of verified members in the guild
-        guild_members = await firebase_db_connection.get_guild_members(guild_id=str(ctx.guild_id))
-
-        # Get verified member info
-        user_list = []
-        try:
-            for member_id in guild_members:
-                user_list.append(
-                    await firebase_db_connection.get_user(author_id=str(member_id))
-                )
-        except Exception as exc:
-            print("FAILED CREATING USER LIST: " + str(exc))
-
-        await update_user_roles.update_user_roles(self, user_list=user_list, bot=self.bot, ctx=ctx)
-
-        await ctx.followup.send("Discord Member Roles Updated.",
-                    ephemeral=True)
-
+ 
     # pylint: disable=no-member
     @commands.slash_command(
         name="add-guild", description="Add the Discord Guild to the DB."
@@ -217,6 +189,11 @@ class SlashCommands(commands.Cog):
 
 def setup(bot):
     """
-    Add cog to bot
+    Add Cog to Bot
     """
-    bot.add_cog(SlashCommands(bot))
+    try:
+        bot.add_cog(SlashCommands(bot))
+        print("Slash Commands Cog Added")
+    except Exception as exc:
+        print(exc)
+  

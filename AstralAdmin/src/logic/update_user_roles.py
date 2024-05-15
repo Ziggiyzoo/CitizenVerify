@@ -3,15 +3,13 @@ Module to update a users discord roles.
 """
 import discord
 
-from src.logic import rsi_lookup
+from src.logic import rsi_lookup, firebase_db_connection
 
-async def update_user_roles(self, user_list, bot: discord.bot, ctx):
+async def update_user_roles(user_list, bot: discord.bot, guild_id: str):
     """
     Update the discord members roles based on the RSI site.
     """
-    membership_list = ["Astral Dynamics Member",
-                        "Astral Dynamics Affiliate"
-                    ]
+    guild = await bot.fetch_guild(int(guild_id))
     rank_list = [
                 "Affiliates",
                 "Juniors",
@@ -20,48 +18,135 @@ async def update_user_roles(self, user_list, bot: discord.bot, ctx):
                 "Directors",
                 "Board Members"
                 ]
-    # Check members RSI info
-    for user in user_list:
-        self.user_handle = user["user_rsi_handle"]
-        membership_status = await rsi_lookup.get_user_membership_info(rsi_handle=self.user_handle)
-        if membership_status["main_member"] is not None:
-            if membership_status["main_member"]:
-                membership_index = 0
-            else:
-                membership_index = 1
-
-
-            # Update Discord user roles
-            try:
-                guild = bot.get_guild(ctx.guild_id)
-                user = guild.get_member(int(user["user_id"]))
-
-                # Add Membership state
-                await user.add_roles(
-                    *[
-                        discord.utils.get(
-                            guild.roles, name=membership_list[membership_index]
-                        ),
-                        discord.utils.get(
-                            guild.roles, name=rank_list[int(membership_status["member_rank"])]
-                        ),
-                    ]
-                )
-                await user.remove_roles(
-                    discord.utils.get(
-                        guild.roles, name=membership_list[membership_index - 1]
-                    )
-                )
-                for i in [1, 2, 3, 4, 5]:
-                    await user.remove_roles(
-                        discord.utils.get(
-                            guild.roles, name=rank_list[int(membership_status["member_rank"]) - i]
+    org_roles_list = [
+        "CEO",
+        "Executive",
+        "Marketing",
+        "Human Resources"
+    ]
+    # Get List of Org Members
+    org_membership_dict = await rsi_lookup.get_org_membership_info(
+        spectrum_id=await firebase_db_connection.get_guild_sid(guild_id)
+        )
+    org_membership_list = org_membership_dict["data"]
+    
+    try:
+        # Update Users in the Discord
+        for user in user_list:
+            user_handle = user["user_rsi_handle"]
+            user = await guild.fetch_member(int(user["user_id"]))
+            
+            if any(d["handle"] == user_handle for d in org_membership_list):
+                try:
+                    user_membership_info = next((member for member in org_membership_list if member["handle"] == user_handle), None)
+                    if user_membership_info is None:
+                        raise ValueError(
+                            "User Membership Info Dictionary does not exist."
                         )
-                    )
-            except AttributeError as exc:
-                # Uh Oh
-                await ctx.followup.send("Failed to update role for User: " + self.user_handle + ". Error: " + str(exc))
+                except ValueError as exc:
+                    print(str(exc) + f"For user {user_handle}")
 
-            except discord.DiscordException as exc:
-                # Uh Oh
-                await ctx.followup.send("Failed to update role for User: " + str(self.user_handle) + ". Error: " + str(exc))
+                # Check if the user already has membership role
+                if user_membership_info["stars"] == 0:
+                    membership = "Astral Dynamics Affiliate"
+                    remove_membership = "Astral Dynamics Member"
+                else:
+                    membership = "Astral Dynamics Member"
+                    remove_membership = "Astral Dynamics Affiliate"
+                
+                # Get Users Roles
+                roles = [role.name for role in user.roles]
+
+                if membership not in roles:
+                    print(f"Membership \n{membership} \n\nNot in roles \n{roles}")
+                    # Assign the role to the user
+                    await user.add_roles(
+                        *[
+                            discord.utils.get(
+                                guild.roles,
+                                name=membership
+                            )
+                        ]
+                    )
+                    await user.remove_roles(
+                        *[
+                            discord.utils.get(
+                                guild.roles,
+                                name=remove_membership
+                            )
+                        ]
+                    )
+                else:
+                    # User already has this role
+                    pass
+
+                # Get users Rank
+                rank = rank_list[user_membership_info["stars"]]
+                if rank not in roles:
+                    # Assign the role to the user
+                    await user.add_roles(
+                        *[
+                            discord.utils.get(
+                                guild.roles,
+                                name=rank
+                            )
+                        ]
+                    )
+                    for i in [1, 2, 3, 4, 5]:
+                        await user.remove_roles(
+                            discord.utils.get(
+                                guild.roles,
+                                name=rank_list[user_membership_info["stars"] - i]
+                            )
+                        )
+                else:
+                    # User already has this role
+                    pass
+
+                # Get User Organisation Role
+                org_roles = user_membership_info["roles"]
+                if org_roles != []:
+                    # Add Org Roles they have
+                    for org_role in org_roles:
+                        if org_role not in roles:
+                            await user.add_roles(
+                                discord.utils.get(
+                                    guild.roles,
+                                    name=org_role
+                                )
+                            )
+                    # Remove Org Roles they don't have
+                    for org_role in org_roles_list:
+                        if org_role not in org_roles:
+                            await user.remove_roles(
+                                discord.utils.get(
+                                    guild.roles,
+                                    name=org_role
+                                )
+                            )
+
+                else:
+                    # User has no org roles
+                    for org_role in org_roles_list:
+                        if org_role in roles:
+                            await user.remove_roles(
+                                discord.utils.get(
+                                    guild.roles,
+                                    name=org_role
+                                )
+                            )
+                            
+            else:
+                # User not in org
+                pass
+            
+    except AttributeError as exc:
+        # Uh Oh
+        return "Failed to update role for User: " + user_handle + ". Error: " + str(exc)
+
+    except discord.DiscordException as exc:
+        # Uh Oh
+        return "Failed to update role for User: " + user_handle + ". Error: " + str(exc)
+
+    return "Roles updated successfully for guild: " + guild.name
+            

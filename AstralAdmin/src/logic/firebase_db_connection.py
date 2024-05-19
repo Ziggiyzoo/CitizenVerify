@@ -185,8 +185,7 @@ async def get_guild_ids():
     if docs is not None:
         guild_ids = [doc.to_dict()["guild_id"] for doc in docs]
         return guild_ids
-    else:
-        return None
+    return None
 
 async def get_guild_sid(guild_id: str):
     """
@@ -194,7 +193,7 @@ async def get_guild_sid(guild_id: str):
     """
     try:
         return guilds_col.document(f"{guild_id}").get().to_dict()["guild_spectrum_id"]
-        
+
     except exceptions.FirebaseError as exc:
         print("ERROR IN DB CONNECTION: " + str(exc))
         return None

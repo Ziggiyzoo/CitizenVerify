@@ -21,9 +21,6 @@ async def get_org_membership_info(spectrum_id: str):
     except ConnectionError as exc:
         print(exc)
         return None
-    except httpx._exceptions as exc:
-        print(exc)
-        return None
 
 
     return response.json()

@@ -5,7 +5,7 @@ import discord
 
 from src.logic import rsi_lookup, firebase_db_connection
 
-async def update_user_roles(user_list, bot: discord.bot, guild_id: str):
+async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
     """
     Update the discord members roles based on the RSI site.
     """

@@ -99,7 +99,7 @@ class SlashCommands(commands.Cog):
                                                                                     guild_verification_status=True)
                         user_list = []
                         user_list.append(user_info)
-                        await update_user_roles.update_user_roles(self, user_list=user_list, bot=self.bot, ctx=ctx)
+                        await update_user_roles.update_user_roles(self, user_list=user_list, bot=self.bot, guild_id=guild_id)
                         await ctx.followup.send(
                             f"Thank you {rsi_handle}, your Discord and RSI Accounts are now symbollically bound."
                             + "\n\nYou will not be able to access any more of the server unless you are a "
@@ -194,13 +194,10 @@ class SlashCommands(commands.Cog):
 
             # Get verified member info
             user_list = []
-            try:
-                for member_id in guild_members:
-                    user_list.append(
-                        await firebase_db_connection.get_user(author_id=str(member_id))
-                    )
-            except Exception as exc:
-                print("FAILED CREATING USER LIST: " + str(exc))
+            for member_id in guild_members:
+                user_list.append(
+                    await firebase_db_connection.get_user(author_id=str(member_id))
+                )
 
             response = await update_user_roles.update_user_roles(user_list=user_list, bot=self.bot, guild_id=guild_id)
             await info.send(response)
@@ -209,9 +206,6 @@ def setup(bot):
     """
     Add Cog to Bot
     """
-    try:
-        bot.add_cog(SlashCommands(bot))
-        print("Slash Commands Cog Added")
-    except Exception as exc:
-        print(exc)
+    bot.add_cog(SlashCommands(bot))
+    print("Slash Commands Cog Added")
   

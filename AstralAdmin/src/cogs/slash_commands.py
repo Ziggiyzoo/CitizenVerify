@@ -139,7 +139,7 @@ class SlashCommands(commands.Cog):
         """
         Send the user instructions on how to apply to Astral Dynamics.
         """
-        ctx.respond("Hi there " + ctx.author_id + ". To Apply to Astral Dynamics please use this link:"
+        await ctx.respond(f"Hi there {ctx.author.mention}. To Apply to Astral Dynamics please use this link:"
                     + "\n\nhttps://robertsspaceindustries.com/orgs/ASTDYN"
                     + "\n\nOnce you have done this please @ mention Human Resources.",
                     ephemeral=True)

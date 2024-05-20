@@ -20,13 +20,6 @@ ORG_ROLES_LIST = [
         "Human Resources"
     ]
 
-"""
-pylint:
-    disable=R0914,
-    disable=R1702,
-    disable=R0912,
-    disable=R0915
-"""
 async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
     """
     Update the discord members roles based on the RSI site.

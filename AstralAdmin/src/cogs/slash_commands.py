@@ -100,7 +100,7 @@ class SlashCommands(commands.Cog):
                         user_list = []
                         user_list.append(user_info)
                         await update_user_roles.update_user_roles(self,
-                                                                  user_list=user_list,
+                                                                  user_list,
                                                                   bot=self.bot,
                                                                   guild_id=guild_id)
                         await ctx.followup.send(
@@ -147,7 +147,6 @@ class SlashCommands(commands.Cog):
                     + "\n\nOnce you have done this please @ mention Human Resources.",
                     ephemeral=True)
 
-    # pylint: disable=no-member
     @commands.slash_command(
         name="add-guild", description="Add the Discord Guild to the DB."
     )

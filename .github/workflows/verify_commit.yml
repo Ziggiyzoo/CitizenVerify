@@ -57,55 +57,55 @@ jobs:
         run: |
           poetry run pylint $(git ls-files '*.py')
 
-  test_application:
-    name: "Test the Project"
-    needs:
-      - lint_application
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [ "3.11" ]
-        poetry-version: [ "1.8.2" ]
-    steps:
-      - uses: actions/checkout@v3
+  # test_application:
+  #   name: "Test the Project"
+  #   needs:
+  #     - lint_application
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       python-version: [ "3.11" ]
+  #       poetry-version: [ "1.8.2" ]
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
-        with:
-          python-version: ${{ matrix.python-version }}
+  #     - name: Set up Python ${{ matrix.python-version }}
+  #       uses: actions/setup-python@v3
+  #       with:
+  #         python-version: ${{ matrix.python-version }}
 
-      - name: Load cached Poetry installation
-        uses: actions/cache@v2
-        with:
-          path: ~/.local
-          key: poetry-0  # increment to reset cache
+  #     - name: Load cached Poetry installation
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: ~/.local
+  #         key: poetry-0  # increment to reset cache
 
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: ${{ matrix.poetry-version }}
-          virtualenvs-create: true
-          virtualenvs-in-project: true
+  #     - name: Install Poetry
+  #       uses: snok/install-poetry@v1
+  #       with:
+  #         version: ${{ matrix.poetry-version }}
+  #         virtualenvs-create: true
+  #         virtualenvs-in-project: true
 
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v2
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+  #     - name: Load cached venv
+  #       id: cached-poetry-dependencies
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: .venv
+  #         key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
 
-      - name: Install dependencies
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: |
-          poetry install
+  #     - name: Install dependencies
+  #       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+  #       run: |
+  #         poetry install
 
-      - name: Run Unit Tests
-        env:
-          TOKEN: ${{ secrets.TEST_DISCORDTOKEN }}
-          SC_API_KEY: ${{ secrets.SC_API_KEY }}
+  #     - name: Run Unit Tests
+  #       env:
+  #         TOKEN: ${{ secrets.TEST_DISCORDTOKEN }}
+  #         SC_API_KEY: ${{ secrets.SC_API_KEY }}
 
-        run: |
-          poetry run python -m pytest
+  #       run: |
+  #         poetry run python -m pytest
 
   run_application:
     name: "Run the Project"

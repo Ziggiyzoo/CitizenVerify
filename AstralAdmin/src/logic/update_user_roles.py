@@ -5,12 +5,7 @@ import discord
 
 from src.logic import rsi_lookup, firebase_db_connection
 
-async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
-    """
-    Update the discord members roles based on the RSI site.
-    """
-    guild = await bot.fetch_guild(int(guild_id))
-    rank_list = [
+RANK_LIST = [
                 "Affiliates",
                 "Juniors",
                 "Seniors",
@@ -18,18 +13,31 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
                 "Directors",
                 "Board Members"
                 ]
-    org_roles_list = [
+ORG_ROLES_LIST = [
         "CEO",
         "Executive",
         "Marketing",
         "Human Resources"
     ]
+
+"""
+pylint:
+    disable=R0914,
+    disable=R1702,
+    disable=R0912,
+    disable=R0915
+"""
+async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
+    """
+    Update the discord members roles based on the RSI site.
+    """
+    guild = await bot.fetch_guild(int(guild_id))
     # Get List of Org Members
     org_membership_dict = await rsi_lookup.get_org_membership_info(
         spectrum_id=await firebase_db_connection.get_guild_sid(guild_id)
         )
     org_membership_list = org_membership_dict["data"]
-    
+
     try:
         # Update Users in the Discord
         for user in user_list:
@@ -39,7 +47,8 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
             roles = [role.name for role in user.roles]
             if any(d["handle"] == user_handle for d in org_membership_list):
                 try:
-                    user_membership_info = next((member for member in org_membership_list if member["handle"] == user_handle), None)
+                    user_membership_info = next((member for member in org_membership_list if member["handle"] == user_handle),
+                                                 None)
                     if user_membership_info is None:
                         raise ValueError(
                             "User Membership Info Dictionary does not exist."
@@ -54,7 +63,7 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
                 else:
                     membership = "Astral Dynamics Member"
                     remove_membership = "Astral Dynamics Affiliate"
-                
+
                 if membership not in roles:
                     print(f"Membership \n{membership} \n\nNot in roles \n{roles}")
                     # Assign the role to the user
@@ -79,7 +88,7 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
                     pass
 
                 # Get users Rank
-                rank = rank_list[user_membership_info["stars"]]
+                rank = RANK_LIST[user_membership_info["stars"]]
                 if rank not in roles:
                     # Assign the role to the user
                     await user.add_roles(
@@ -94,7 +103,7 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
                         await user.remove_roles(
                             discord.utils.get(
                                 guild.roles,
-                                name=rank_list[user_membership_info["stars"] - i]
+                                name=RANK_LIST[user_membership_info["stars"] - i]
                             )
                         )
                 else:
@@ -114,7 +123,7 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
                                 )
                             )
                     # Remove Org Roles they don't have
-                    for org_role in org_roles_list:
+                    for org_role in ORG_ROLES_LIST:
                         if org_role not in org_roles:
                             await user.remove_roles(
                                 discord.utils.get(
@@ -125,7 +134,7 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
 
                 else:
                     # User has no org roles
-                    for org_role in org_roles_list:
+                    for org_role in ORG_ROLES_LIST:
                         if org_role in roles:
                             await user.remove_roles(
                                 discord.utils.get(
@@ -133,10 +142,10 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
                                     name=org_role
                                 )
                             )
-                            
+
             else:
                 # User not in org
-                for org_role in org_roles_list:
+                for org_role in ORG_ROLES_LIST:
                     if org_role in roles:
                         await user.remove_roles(
                             discord.utils.get(
@@ -144,7 +153,7 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
                                 name=org_role
                             )
                         )
-                for rank_role in rank_list:
+                for rank_role in RANK_LIST:
                     if rank_role in roles:
                         await user.remove_roles(
                             discord.utils.get(
@@ -154,13 +163,13 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
                         )
                 for membership_role in ["Astral Dynamics Affiliate", "Astral Dynamics Member"]:
                     if membership_role in roles:
-                      await user.remove_roles(
+                        await user.remove_roles(
                             discord.utils.get(
                                 guild.roles,
                                 name=membership_role
                             )
-                        )  
-            
+                        )
+
     except AttributeError as exc:
         # Uh Oh
         return "Failed to update role for User: " + user_handle + ". Error: " + str(exc)

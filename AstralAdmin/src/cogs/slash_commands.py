@@ -101,8 +101,8 @@ class SlashCommands(commands.Cog):
                         user_list.append(user_info)
                         await update_user_roles.update_user_roles(self,
                                                                   user_list,
-                                                                  bot=self.bot,
-                                                                  guild_id=guild_id)
+                                                                  self.bot,
+                                                                  guild_id)
                         await ctx.followup.send(
                             f"Thank you {rsi_handle}, your Discord and RSI Accounts are now symbollically bound."
                             + "\n\nYou will not be able to access any more of the server unless you are a "

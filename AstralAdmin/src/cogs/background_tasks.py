@@ -15,7 +15,7 @@ class BackgroundTasks(commands.Cog):
         print("Init Background Tasks")
         self.update_org_roles.start()
 
-    #  pylint: disable=R0914
+    #  pylint: disable=no-member
     @tasks.loop(hours=1)
     async def update_org_roles(self):
         """

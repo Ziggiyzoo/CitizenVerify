@@ -99,7 +99,10 @@ class SlashCommands(commands.Cog):
                                                                                     guild_verification_status=True)
                         user_list = []
                         user_list.append(user_info)
-                        await update_user_roles.update_user_roles(self, user_list=user_list, bot=self.bot, guild_id=guild_id)
+                        await update_user_roles.update_user_roles(self,
+                                                                  user_list=user_list,
+                                                                  bot=self.bot,
+                                                                  guild_id=guild_id)
                         await ctx.followup.send(
                             f"Thank you {rsi_handle}, your Discord and RSI Accounts are now symbollically bound."
                             + "\n\nYou will not be able to access any more of the server unless you are a "
@@ -199,7 +202,7 @@ class SlashCommands(commands.Cog):
                     await firebase_db_connection.get_user(author_id=str(member_id))
                 )
 
-            response = await update_user_roles.update_user_roles(user_list=user_list, bot=self.bot, guild_id=guild_id)
+            response = await update_user_roles.update_user_roles(user_list, bot=self.bot, guild_id=guild_id)
             await info.send(response)
 
 def setup(bot):

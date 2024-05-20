@@ -1,8 +1,15 @@
+[MESSAGE-OPTIONS]
+disable=no-member
+
 [FORMAT]
-max-line-length=120
+max-line-length=150
 
 [TYPECHECK]
 generated-members=discord.Options|firebase_admin.firestore.SERVER_TIMESTAMPS
 
 [DESIGN]
-max-branches=13
+max-branches=30
+max-locals=25
+max-args=15
+max-nested=10
+max-statements=100

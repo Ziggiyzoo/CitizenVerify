@@ -16,5 +16,5 @@ if __name__ == "__main__":
     token: str = environ["TOKEN"]
     Bot: AstralAdmin = AstralAdmin()
     Bot.load_extensions("src.cogs", recursive=True)
-    print("cogs loaded")
+    print("Cogs Loaded")
     Bot.run(token)

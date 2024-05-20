@@ -143,7 +143,7 @@ class SlashCommands(commands.Cog):
                     + "\n\nhttps://robertsspaceindustries.com/orgs/ASTDYN"
                     + "\n\nOnce you have done this please @ mention Human Resources.",
                     ephemeral=True)
- 
+
     # pylint: disable=no-member
     @commands.slash_command(
         name="add-guild", description="Add the Discord Guild to the DB."

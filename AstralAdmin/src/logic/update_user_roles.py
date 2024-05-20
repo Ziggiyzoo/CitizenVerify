@@ -99,6 +99,7 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
                             )
                         ]
                     )
+
                     for i in [1, 2, 3, 4, 5]:
                         await user.remove_roles(
                             discord.utils.get(

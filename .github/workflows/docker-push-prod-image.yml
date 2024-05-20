@@ -37,7 +37,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:production
           labels: ${{ steps.meta.outputs.labels }}
-          secrets: |
-            TOKEN=${{secrets.PROD_TOKEN}}
-            SC_API_KEY=${{secrets.SC_API_KEY}}
-            FIREBASE_SECRET=${{secrets.FIREBASE_SECRET}}
+          build-args: |
+              token=${{ secrets.PROD_TOKEN }}
+              sc_api_key=${{ secrets.SC_API_KEY }}
+              firebase_secret=${{ secrets.FIREBASE_SECRET }}

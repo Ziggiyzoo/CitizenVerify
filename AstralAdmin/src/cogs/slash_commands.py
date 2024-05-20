@@ -44,7 +44,8 @@ class SlashCommands(commands.Cog):
             await ctx.followup.send(
                 "Please input your RSI Handle."
             )
-        elif not await rsi_lookup.check_rsi_handle(rsi_handle=rsi_handle):
+        user =  await rsi_lookup.get_user_info(rsi_handle=rsi_handle)
+        if user is None:
             await ctx.followup.send(
                 "That RSI Handle is invalid. Please imput a correct Value"
             )
@@ -52,17 +53,17 @@ class SlashCommands(commands.Cog):
             # Check if the user exists
             user_info = await firebase_db_connection.get_user(author_id=author_id)
             if user_info is None:
-                # The did not exist. Create them.
+                # They did not exist. Create them.
                 code = "".join([random.choice(string.ascii_letters) for n in range(10)])
                 await firebase_db_connection.put_new_user(
                     author_id=str(author_id),
                     guild_id=str(guild_id),
-                    rsi_handle=rsi_handle,
+                    rsi_handle=user["data"]["profile"]["handle"],
+                    display_name=user["data"]["profile"]["display"],
                     user_verification_code=code
                 )
 
                 # Tell then user to put the code in their RSI Bio
-
                 await ctx.followup.send(
                     f"Greetings {author_name}" +
                     f", please add the following to your RSI Account's Short Bio: {code}" +
@@ -98,7 +99,9 @@ class SlashCommands(commands.Cog):
                                                                                     guild_verification_status=True)
                         user_list = []
                         user_list.append(user_info)
-                        await update_user_roles.update_user_roles(self, user_list=user_list, bot=self.bot, ctx=ctx)
+                        await update_user_roles.update_user_roles(user_list=user_list,
+                                                                  bot=self.bot,
+                                                                  guild_id=guild_id)
                         await ctx.followup.send(
                             f"Thank you {rsi_handle}, your Discord and RSI Accounts are now symbollically bound."
                             + "\n\nYou will not be able to access any more of the server unless you are a "
@@ -106,7 +109,13 @@ class SlashCommands(commands.Cog):
                             ephemeral=True
                         )
                         try:
-                            await ctx.author.edit(nick=user_info["user_rsi_handle"])
+                            await ctx.author.edit(nick=user_info["user_display_name"])
+                            await ctx.author.add_role(
+                                discord.utils.get(
+                                    ctx.guild.roles,
+                                    name="Account Bound"
+                                )
+                            )
                         except discord.errors.Forbidden as exc:
                             print(exc)
 
@@ -132,38 +141,11 @@ class SlashCommands(commands.Cog):
         """
         Send the user instructions on how to apply to Astral Dynamics.
         """
-        ctx.respond("Hi there " + ctx.author_id + ". To Apply to Astral Dynamics please use this link:"
+        await ctx.respond(f"Hi there {ctx.author.mention}. To Apply to Astral Dynamics please use this link:"
                     + "\n\nhttps://robertsspaceindustries.com/orgs/ASTDYN"
                     + "\n\nOnce you have done this please @ mention Human Resources.",
                     ephemeral=True)
 
-    @commands.slash_command(
-        name="update-roles", description="Update the roles of bound members on the discord."
-    )
-    @commands.has_permissions(administrator=True)
-    async def update_org_roles(self, ctx):
-        """
-        Admin only command to trigger the update of Discord roles based of the RSI Org page.
-        """
-        # Defer
-        await ctx.defer(ephemeral=True)
-
-        # Get list of verified members in the guild
-        guild_members = await firebase_db_connection.get_guild_members(guild_id=str(ctx.guild_id))
-
-        # Get verified member info
-        user_list = []
-        for member_id in guild_members:
-            user_list.append(
-                await firebase_db_connection.get_user(author_id=str(member_id))
-            )
-
-        await update_user_roles.update_user_roles(self, user_list=user_list, bot=self.bot, ctx=ctx)
-
-        await ctx.followup.send("Discord Member Roles Updated.",
-                    ephemeral=True)
-
-    # pylint: disable=no-member
     @commands.slash_command(
         name="add-guild", description="Add the Discord Guild to the DB."
     )
@@ -196,8 +178,35 @@ class SlashCommands(commands.Cog):
             ctx.respond("The Discord server failed to be removed from the Database",
                         ephemeral=True)
 
+    @commands.slash_command(
+    name="update-roles", description="Update the roles of bound members on the discord."
+    )
+    @commands.has_permissions(administrator=True)
+    async def update_org_roles(self, ctx):
+        """
+        Admin only command to trigger the update of Discord roles based of the RSI Org page.
+        """
+        await ctx.respond("Running roles Update Now")
+        info = self.bot.get_channel(1233738280118390795)
+        guild_ids = await firebase_db_connection.get_guild_ids()
+        for guild_id in guild_ids:
+            # Get list of verified members in the guild
+            guild_members = await firebase_db_connection.get_guild_members(guild_id=guild_id)
+
+            # Get verified member info
+            user_list = []
+            for member_id in guild_members:
+                user_list.append(
+                    await firebase_db_connection.get_user(author_id=str(member_id))
+                )
+
+            response = await update_user_roles.update_user_roles(user_list, bot=self.bot, guild_id=guild_id)
+            await info.send(response)
+
 def setup(bot):
     """
-    Add cog to bot
+    Add Cog to Bot
     """
     bot.add_cog(SlashCommands(bot))
+    print("Slash Commands Cog Added")
+  

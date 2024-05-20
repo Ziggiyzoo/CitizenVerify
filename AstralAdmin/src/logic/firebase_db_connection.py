@@ -17,7 +17,8 @@ guilds_col = db.collection("guilds")
 async def put_new_user(author_id: str,
                        guild_id: str,
                        user_verification_code: str,
-                       rsi_handle: str):
+                       rsi_handle: str,
+                       display_name: str):
     """
     Add New User to the DB
     """
@@ -30,7 +31,8 @@ async def put_new_user(author_id: str,
                 "user_verification_code": f"{user_verification_code}",
                 "user_verification_progress": 0,
                 "user_verification_status": False,
-                "user_rsi_handle": f"{rsi_handle}"
+                "user_rsi_handle": f"{rsi_handle}",
+                "user_display_name": f"{display_name}"
             }
         )
 
@@ -58,7 +60,8 @@ async def put_new_guild(guild_id: str,
         guild_ref.set(
             {
                 "guild_name": guild_name,
-                "guild_spectrum_id": spectrum_id
+                "guild_spectrum_id": spectrum_id,
+                "guild_id": guild_id
             }
         )
         return True
@@ -169,3 +172,28 @@ async def get_guild_members(guild_id: str):
         guild_members = [member.id for member in guild_member_info]
         return guild_members
     return None
+
+async def get_guild_ids():
+    """
+    Get a list of added guilds
+    """
+    try:
+        docs = guilds_col.stream()
+    except exceptions.FirebaseError as exc:
+        print("ERROR IN DB CONNECTION: " + str(exc))
+        return None
+    if docs is not None:
+        guild_ids = [doc.to_dict()["guild_id"] for doc in docs]
+        return guild_ids
+    return None
+
+async def get_guild_sid(guild_id: str):
+    """
+    Get Guild SID
+    """
+    try:
+        return guilds_col.document(f"{guild_id}").get().to_dict()["guild_spectrum_id"]
+
+    except exceptions.FirebaseError as exc:
+        print("ERROR IN DB CONNECTION: " + str(exc))
+        return None

@@ -64,4 +64,4 @@ async def verify_rsi_handle(rsi_handle, verification_code):
         except KeyError as exc:
             print(exc)
             return False
-    return False 
+    return False

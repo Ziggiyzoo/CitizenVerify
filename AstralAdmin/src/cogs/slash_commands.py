@@ -47,7 +47,7 @@ class SlashCommands(commands.Cog):
         user =  await rsi_lookup.get_user_info(rsi_handle=rsi_handle)
         if user is None:
             await ctx.followup.send(
-                "That RSI Handle is invalid. Please imput a correct Value"
+                "That RSI Handle is invalid. Please input a correct Value"
             )
         else:
             # Check if the user exists

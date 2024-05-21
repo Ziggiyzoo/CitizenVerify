@@ -5,8 +5,6 @@ import discord
 
 from src.logic import rsi_lookup, firebase_db_connection
 
-import json
-
 RANK_LIST = [
                 "Affiliates",
                 "Juniors",
@@ -35,7 +33,7 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
     try:
         # Update Users in the Discord
         for user in user_list:
-            if user is not None:    
+            if user is not None:
                 user_handle = user["user_rsi_handle"]
                 user = await guild.fetch_member(int(user["user_id"]))
                 # Get Users Roles

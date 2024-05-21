@@ -33,7 +33,7 @@ class AstralAdmin(ext_commands.Bot):
         """
         welcome = self.get_channel(1230973934048903178)
         lobby = self.get_channel(1231045018471501844)
-        
+
         await welcome.send(member.mention)
         embed = discord.Embed(
             title="Welcome to Astral Admin",

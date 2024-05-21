@@ -48,4 +48,4 @@ class AstralAdmin(ext_commands.Bot):
                         value="\n*Astral Dynamics focuses on providing* ***Resource Acquisition***,"
                          " ***Processing & Delivery*** *in a* ***Secure*** *and* ***Timely*** *Manner*.",
                         inline=False)
-        await welcome.send(embed=embed, ephemeral=True)
+        await welcome.send(embed=embed)

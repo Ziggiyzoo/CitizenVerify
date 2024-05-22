@@ -6,9 +6,9 @@ import discord
 from src.logic import rsi_lookup, firebase_db_connection
 
 RANK_LIST = [
-                "Affiliates",
-                "Juniors",
-                "Seniors",
+                "Attiliate Programme",
+                "Employees",
+                "Team Leaders",
                 "Managers",
                 "Directors",
                 "Board Members"

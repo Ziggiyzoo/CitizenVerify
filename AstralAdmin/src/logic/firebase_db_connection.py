@@ -197,3 +197,9 @@ async def get_guild_sid(guild_id: str):
     except exceptions.FirebaseError as exc:
         print("ERROR IN DB CONNECTION: " + str(exc))
         return None
+
+async def del_user(guild_id: str, user_id: str):
+    """
+    When a member leaves a guild, delete the user reference from the Guild & User Collection
+    """
+    # TODO

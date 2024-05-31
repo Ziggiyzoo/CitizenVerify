@@ -2,11 +2,12 @@
 Module to update a users discord roles.
 """
 import discord
+import traceback
 
 from src.logic import rsi_lookup, firebase_db_connection
 
 RANK_LIST = [
-                "Attiliate Programme",
+                "Affiliate Programme",
                 "Employees",
                 "Team Leaders",
                 "Managers",
@@ -165,14 +166,17 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
                             )
             else:
                 raise AttributeError("User List returned None from the DB")
+        return "Roles Updated"
 
-    except AttributeError as exc:
+    except AttributeError:
         # Uh Oh
-        return "Failed to update role for User: " + user_handle + ". Error: " + str(exc)
+        return f"Failed to update role for User: {user_handle}. Error: {traceback.format_exc()}"
 
-    except discord.DiscordException as exc:
+    except discord.DiscordException:
         # Uh Oh
-        return "Failed to update role for User: " + user_handle + ". Error: " + str(exc)
+        return f"Failed to update role for User: {user_handle}. Error: {traceback.format_exc()}"
 
-    return None
+    except Exception:
+        # Uh Oh
+        return f"Failed to update role for User: {user_handle}. Error: {traceback.format_exc()}"
             

@@ -4,6 +4,7 @@ All User Slash Commands for Astral Admin
 import random
 import string
 import discord
+import json
 
 from discord.ext import commands
 
@@ -187,7 +188,6 @@ class SlashCommands(commands.Cog):
         Admin only command to trigger the update of Discord roles based of the RSI Org page.
         """
         await ctx.respond("Running roles Update Now")
-        info = self.bot.get_channel(1233738280118390795)
         guild_ids = await firebase_db_connection.get_guild_ids()
         for guild_id in guild_ids:
             # Get list of verified members in the guild
@@ -201,7 +201,8 @@ class SlashCommands(commands.Cog):
                 )
 
             response = await update_user_roles.update_user_roles(user_list, bot=self.bot, guild_id=guild_id)
-            await info.send(response)
+
+            await self.bot.get_channel(1233738280118390795).send(response)
 
 def setup(bot):
     """

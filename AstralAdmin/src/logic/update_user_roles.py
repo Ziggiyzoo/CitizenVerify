@@ -4,6 +4,10 @@ Module to update a users discord roles.
 import discord
 import traceback
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from src.logic import rsi_lookup, firebase_db_connection
 
 RANK_LIST = [
@@ -25,6 +29,7 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
     """
     Update the discord members roles based on the RSI site.
     """
+    logger.info("Get Guild Members")
     guild = await bot.fetch_guild(int(guild_id))
     # Get List of Org Members
     org_membership_dict = await rsi_lookup.get_org_membership_info(
@@ -32,6 +37,7 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
         )
     org_membership_list = org_membership_dict["data"]
     try:
+        logger.info("Update User Roles")
         # Update Users in the Discord
         for user in user_list:
             if user is not None:
@@ -48,7 +54,7 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
                                 "User Membership Info Dictionary does not exist."
                             )
                     except ValueError as exc:
-                        print(str(exc) + f"For user {user_handle}")
+                        logger.error(str(exc) + f"For user {user_handle}")
 
                     # Check if the user already has membership role
                     if user_membership_info["stars"] == 0:
@@ -59,7 +65,6 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
                         remove_membership = "Astral Dynamics Affiliate"
 
                     if membership not in roles:
-                        print(f"Membership \n{membership} \n\nNot in roles \n{roles}")
                         # Assign the role to the user
                         await user.add_roles(
                             *[
@@ -103,6 +108,7 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
                             )
                     else:
                         # User already has this role
+                        logger.debug(f"User {user_handle} already has this role")
                         pass
 
                     # Get User Organisation Role
@@ -170,13 +176,16 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
 
     except AttributeError:
         # Uh Oh
+        logger.error(f"Attribute Error while updating roles for {user_handle}: {traceback.format_exc()}")
         return f"Failed to update role for User: {user_handle}. Error: {traceback.format_exc()}"
 
     except discord.DiscordException:
         # Uh Oh
+        logger.error(f"Discord Error while updating roles for {user_handle}: {traceback.format_exc()}")
         return f"Failed to update role for User: {user_handle}. Error: {traceback.format_exc()}"
 
     except Exception:
         # Uh Oh
+        logger.error(f"Unkown Error while updating roles for {user_handle}: {traceback.format_exc()}")
         return f"Failed to update role for User: {user_handle}. Error: {traceback.format_exc()}"
             

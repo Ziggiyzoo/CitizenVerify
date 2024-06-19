@@ -6,6 +6,10 @@ from os import environ
 import firebase_admin
 from firebase_admin import credentials, firestore, exceptions
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 cred: credentials.Certificate = credentials.Certificate(json.loads(environ["FIREBASE_SECRET"]))
 
 firebase_admin.initialize_app(cred)
@@ -45,7 +49,7 @@ async def put_new_user(author_id: str,
         )
         return True
     except exceptions.FirebaseError as exc:
-        print(exc)
+        logger.error(f"Error putting new user into Firebase DB: {exc}")
         return False
 
 async def put_new_guild(guild_id: str,
@@ -98,7 +102,7 @@ async def update_user_verification_status(author_id: str,
         )
         return True
     except exceptions.FirebaseError as exc:
-        print(exc)
+        logger.error(f"Error Updating the User Varification Status in the Firebase DB: {exc}")
         return False
 
 # pylint: disable=no-member
@@ -108,6 +112,7 @@ async def update_user_guild_verification(author_id: str,
     """
     Update User Doc with time of  Guild Verification Info
     """
+    logger.info("Update User Guild Verification")
     user_guild_ref = users_col.document(f"{author_id}").collection("user_guilds").document(f"{guild_id}")
     guild_ref = guilds_col.document(f"{guild_id}").collection("members").document(f"{author_id}")
     try:
@@ -129,17 +134,18 @@ async def update_user_guild_verification(author_id: str,
         )
         return True
     except exceptions.FirebaseError as exc:
-        print(exc)
+        logger.error(f"Error Update the Guild Verification Status: {exc}")
         return False
 
 async def get_user(author_id: str):
     """
     Get the User
     """
+    logger.info("Getting User from Database")
     try:
         user_ref = users_col.document(f"{author_id}")
     except exceptions.FirebaseError as exc:
-        print(exc)
+        logger.error(f"Error getting user {author_id} from the database")
         return None
     if user_ref.get().exists:
         return user_ref.get().to_dict()

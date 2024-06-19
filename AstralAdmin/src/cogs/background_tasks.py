@@ -5,6 +5,10 @@ Background Tasks to loop for the bot.
 from discord.ext import commands, tasks
 from src.logic import firebase_db_connection, update_user_roles
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 class BackgroundTasks(commands.Cog):
     """
     Background Tasks
@@ -12,7 +16,7 @@ class BackgroundTasks(commands.Cog):
 
     def __init__(self, bot):
         self.bot: commands.Bot = bot
-        print("Init Background Tasks")
+        logger.info("Start Update Org Roles Task")
         self.update_org_roles.start()
 
     # pylint: disable=duplicate-code
@@ -43,4 +47,4 @@ def setup(bot):
     Add Cog to Bot
     """
     bot.add_cog(BackgroundTasks(bot))
-    print("Background Tasks Cog Added")
+    logger.info("Background Tasks Cog Added")

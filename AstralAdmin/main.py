@@ -2,7 +2,7 @@
 Org Discord Bot
 """
 import logging
-import logging.handlers as handlers
+from logging import handlers
 
 from os import environ
 

@@ -5,9 +5,9 @@ import traceback
 import logging
 import discord
 
-logger = logging.getLogger("AA_Logger")
-
 from src.logic import rsi_lookup, firebase_db_connection
+
+logger = logging.getLogger("AA_Logger")
 
 RANK_LIST = [
                 "Affiliate Programme",

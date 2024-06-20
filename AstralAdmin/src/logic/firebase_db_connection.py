@@ -211,11 +211,11 @@ async def get_guild_sid(guild_id: str):
         logger.error("Error in Getting Guild SID from the Firebase DB: %s", exc)
         return None
 
-async def del_user(guild_id: str, user_id: str):
-    """
-    When a member leaves a guild, delete the user reference from the Guild & User Collection
-    """
-    logger.info("Try and Delete user from all locations in the DB")
+# async def del_user(guild_id: str, user_id: str):
+#     """
+#     When a member leaves a guild, delete the user reference from the Guild & User Collection
+#     """
+#     logger.info("Try and Delete user from all locations in the DB")
 
     # TO DO
         # Del from Users Collection

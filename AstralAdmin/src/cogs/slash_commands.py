@@ -3,12 +3,14 @@ All User Slash Commands for Astral Admin
 """
 import random
 import string
+import logging
 import discord
-import json
 
 from discord.ext import commands
 
 from src.logic import firebase_db_connection, rsi_lookup, update_user_roles
+
+logger = logging.getLogger("AA_Logger")
 
 class SlashCommands(commands.Cog):
     """
@@ -26,6 +28,7 @@ class SlashCommands(commands.Cog):
         Ping! :)
         """
         await ctx.respond("Pong!", ephemeral=True)
+        logger.info("Ping. Pong. Haha Very Funny")
 
     # pylint: disable=no-member
     @commands.slash_command(
@@ -41,99 +44,110 @@ class SlashCommands(commands.Cog):
 
         await ctx.defer(ephemeral=True)
 
-        if rsi_handle is None:
-            await ctx.followup.send(
-                "Please input your RSI Handle."
-            )
-        user =  await rsi_lookup.get_user_info(rsi_handle=rsi_handle)
-        if user is None:
-            await ctx.followup.send(
-                "That RSI Handle is invalid. Please input a correct Value"
-            )
-        else:
-            # Check if the user exists
-            user_info = await firebase_db_connection.get_user(author_id=author_id)
-            if user_info is None:
-                # They did not exist. Create them.
-                code = "".join([random.choice(string.ascii_letters) for n in range(10)])
-                await firebase_db_connection.put_new_user(
-                    author_id=str(author_id),
-                    guild_id=str(guild_id),
-                    rsi_handle=user["data"]["profile"]["handle"],
-                    display_name=user["data"]["profile"]["display"],
-                    user_verification_code=code
-                )
-
-                # Tell then user to put the code in their RSI Bio
+        logger.info("Binding account for discord user %s & %s", author_name, rsi_handle)
+        try:
+            if rsi_handle is None:
+                logger.debug("RSI Handle is None")
                 await ctx.followup.send(
-                    f"Greetings {author_name}" +
-                    f", please add the following to your RSI Account's Short Bio: {code}" +
-                    "\nThis can be found here: https://robertsspaceindustries.com/account/profile" +
-                    "\n\nAfter you have done this please re run this command."
+                    "Please input your RSI Handle."
                 )
-
-                # Update the user verification step to 1
-                await firebase_db_connection.update_user_verification_status(author_id=author_id,
-                                                                             user_verification_status=False,
-                                                                             user_verification_progress=1)
-
+            user =  await rsi_lookup.get_user_info(rsi_handle=rsi_handle)
+            if user is None:
+                logger.debug("RSI Handle is Invalid")
+                await ctx.followup.send(
+                    "That RSI Handle is invalid. Please input a correct Value"
+                )
             else:
-                if user_info["user_verification_progress"] == 0:
-                    if user_info["user_verification_code"] is not None:
-                        await firebase_db_connection.update_user_verification_status(author_id=author_id,
-                                                                                     user_verification_status=False,
-                                                                                     user_verification_progress=1)
-                    else:
-                        ctx.followup.send(
-                            "There has been an error. Please contact a server Admin."
-                        )
-
-                if user_info["user_verification_progress"] == 1:
-                    # The user has begun the process and needs verification
-                    if await rsi_lookup.verify_rsi_handle(rsi_handle=user_info["user_rsi_handle"],
-                                                          verification_code=user_info["user_verification_code"]):
-                        await firebase_db_connection.update_user_verification_status(author_id=author_id,
-                                                                                     user_verification_progress=2,
-                                                                                     user_verification_status=True)
-                        await firebase_db_connection.update_user_guild_verification(author_id=author_id,
-                                                                                    guild_id=guild_id,
-                                                                                    guild_verification_status=True)
-                        user_list = []
-                        user_list.append(user_info)
-                        await update_user_roles.update_user_roles(user_list=user_list,
-                                                                  bot=self.bot,
-                                                                  guild_id=guild_id)
-                        await ctx.followup.send(
-                            f"Thank you {rsi_handle}, your Discord and RSI Accounts are now symbollically bound."
-                            + "\n\nYou will not be able to access any more of the server unless you are a "
-                            + "Member or Affiliate of Astral Dynamics.",
-                            ephemeral=True
-                        )
-                        try:
-                            await ctx.author.edit(nick=user_info["user_display_name"])
-                            await ctx.author.add_role(
-                                discord.utils.get(
-                                    ctx.guild.roles,
-                                    name="Account Bound"
-                                )
-                            )
-                        except discord.errors.Forbidden as exc:
-                            print(exc)
-
-                    else:
-                        await ctx.followup.send(
-                            "Please make sure that you have added your verification code to your RSI Short Bio:" +
-                            f"\nVerification Code {user_info['user_verification_code']}" +
-                            "\nEdit your RSI Profile here: https://robertsspaceindustries.com/account/profile"
-                        )
-
-
-                if user_info["user_verification_progress"] == 2:
-                    await ctx.followup.send(
-                        "You have already bound your Discord and RSI Accounts!" +
-                        "\nIf you haven't already, sign up for a position at Astral Dynamics!" +
-                        "\nhttps://robertsspaceindustries.com/orgs/ASTDYN"
+                # Check if the user exists
+                user_info = await firebase_db_connection.get_user(author_id=author_id)
+                if user_info is None:
+                    # They did not exist. Create them.
+                    logger.info("Create New User")
+                    code = "".join([random.choice(string.ascii_letters) for n in range(10)])
+                    await firebase_db_connection.put_new_user(
+                        author_id=str(author_id),
+                        guild_id=str(guild_id),
+                        rsi_handle=user["data"]["profile"]["handle"],
+                        display_name=user["data"]["profile"]["display"],
+                        user_verification_code=code
                     )
+
+                    # Tell then user to put the code in their RSI Bio
+                    await ctx.followup.send(
+                        f"Greetings {author_name}" +
+                        f", please add the following to your RSI Account's Short Bio: {code}" +
+                        "\nThis can be found here: https://robertsspaceindustries.com/account/profile" +
+                        "\n\nAfter you have done this please re run this command."
+                    )
+
+                    # Update the user verification step to 1
+                    await firebase_db_connection.update_user_verification_status(author_id=author_id,
+                                                                                user_verification_status=False,
+                                                                                user_verification_progress=1)
+
+                else:
+                    if user_info["user_verification_progress"] == 0:
+                        if user_info["user_verification_code"] is not None:
+                            await firebase_db_connection.update_user_verification_status(author_id=author_id,
+                                                                                        user_verification_status=False,
+                                                                                        user_verification_progress=1)
+                        else:
+                            logger.debug("There has been an error")
+                            ctx.followup.send(
+                                "There has been an error. Please contact a server Admin."
+                            )
+                    elif user_info["user_verification_progress"] == 1:
+                        logger.info("Verify the User %s", author_name)
+                        # The user has begun the process and needs verification
+                        if await rsi_lookup.verify_rsi_handle(rsi_handle=user_info["user_rsi_handle"],
+                                                            verification_code=user_info["user_verification_code"]):
+                            await firebase_db_connection.update_user_verification_status(author_id=author_id,
+                                                                                        user_verification_progress=2,
+                                                                                        user_verification_status=True)
+                            await firebase_db_connection.update_user_guild_verification(author_id=author_id,
+                                                                                        guild_id=guild_id,
+                                                                                        guild_verification_status=True)
+                            user_list = []
+                            user_list.append(user_info)
+                            await update_user_roles.update_user_roles(user_list=user_list,
+                                                                    bot=self.bot,
+                                                                    guild_id=guild_id)
+                            await ctx.followup.send(
+                                f"Thank you {rsi_handle}, your Discord and RSI Accounts are now symbollically bound."
+                                + "\n\nYou will not be able to access any more of the server unless you are a "
+                                + "Member or Affiliate of Astral Dynamics.",
+                                ephemeral=True
+                            )
+                            try:
+                                await ctx.author.edit(nick=user_info["user_display_name"])
+                                await ctx.author.add_role(
+                                    discord.utils.get(
+                                        ctx.guild.roles,
+                                        name="Account Bound"
+                                    )
+                                )
+                            except discord.errors.Forbidden as exc:
+                                logger.warning("Bot does not have permissions to update user %s: %s", author_name, exc)
+
+                        else:
+                            await ctx.followup.send(
+                                "Please make sure that you have added your verification code to your RSI Short Bio:" +
+                                f"\nVerification Code {user_info['user_verification_code']}" +
+                                "\nEdit your RSI Profile here: https://robertsspaceindustries.com/account/profile"
+                            )
+
+
+                    elif user_info["user_verification_progress"] == 2:
+                        logger.debug("Account already bound")
+                        await ctx.followup.send(
+                            "You have already bound your Discord and RSI Accounts!" +
+                            "\nIf you haven't already, sign up for a position at Astral Dynamics!" +
+                            "\nhttps://robertsspaceindustries.com/orgs/ASTDYN"
+                        )
+        except discord.DiscordException as exc:
+            logger.error("Discord Error in Bind RSI Account. %s", exc)
+            ctx.followup.send("Unfortunately there was an error with the command.")
+
 
     @commands.slash_command(
             name="apply-now", description="Assistance with applying to the Astral Dynamics Organistation."
@@ -142,6 +156,7 @@ class SlashCommands(commands.Cog):
         """
         Send the user instructions on how to apply to Astral Dynamics.
         """
+        logger.info("Apply Now Command")
         await ctx.respond(f"Hi there {ctx.author.mention}. To Apply to Astral Dynamics please use this link:"
                     + "\n\nhttps://robertsspaceindustries.com/orgs/ASTDYN"
                     + "\n\nOnce you have done this please @ mention Human Resources.",
@@ -155,6 +170,7 @@ class SlashCommands(commands.Cog):
         """
         Admin only command to add the guild to the DB
         """
+        logger.info("Add Guild")
         if await firebase_db_connection.put_new_guild(
             str(ctx.guild_id), ctx.guild.name, spectrum_id
             ):
@@ -172,6 +188,7 @@ class SlashCommands(commands.Cog):
         """
         Admin only command to delete the Discord Guild from the DB
         """
+        logger.info("Delete Guild")
         if await firebase_db_connection.del_guild(guild_id=str(ctx.guild_id)):
             await ctx.respond("The Discord server has been removed from the Database",
                                 ephemeral=True)
@@ -187,6 +204,7 @@ class SlashCommands(commands.Cog):
         """
         Admin only command to trigger the update of Discord roles based of the RSI Org page.
         """
+        logger.info("Update Org Roles Command Run")
         await ctx.respond("Running roles Update Now")
         guild_ids = await firebase_db_connection.get_guild_ids()
         for guild_id in guild_ids:
@@ -209,5 +227,5 @@ def setup(bot):
     Add Cog to Bot
     """
     bot.add_cog(SlashCommands(bot))
-    print("Slash Commands Cog Added")
+    logger.info("Slash Commands Cog Added")
   

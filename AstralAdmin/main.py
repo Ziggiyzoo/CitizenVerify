@@ -5,24 +5,25 @@ import logging
 from logging import handlers
 
 from os import environ
+import os
 
 from src.astral_admin import AstralAdmin
 
 logger = logging.getLogger("AA_Logger")
 log_formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(filename)s:%(lineno)d:%(message)s")
 
+# Check if the logging file exists
+print(os.path.isdir("./logging/"))
+
 # Get Logging Level
 if "DEPLOYMENT_ENV" not in environ or environ["DEPLOYMENT_ENV"] == "":
     LOG_LEVEL = 10
-    LOG_FILE = "./logs/astralAdmin.log"
 elif environ["DEPLOYMENT_ENV"] == "DEV":
     LOG_LEVEL = 20
-    LOG_FILE = "./logging/astralAdmin.log"
 else:
     LOG_LEVEL= 30
-    LOG_FILE = "./logging/astralAdmin.log"
 
-log_handler = handlers.RotatingFileHandler(LOG_FILE, maxBytes=16384, backupCount=10)
+log_handler = handlers.RotatingFileHandler("./logs/astralAdmin.log", maxBytes=16384, backupCount=10)
 log_handler.setFormatter(log_formatter)
 logger.setLevel(LOG_LEVEL)
 log_handler.setLevel(LOG_LEVEL)

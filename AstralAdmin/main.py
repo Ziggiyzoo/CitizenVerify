@@ -5,15 +5,11 @@ import logging
 from logging import handlers
 
 from os import environ
-import os
 
 from src.astral_admin import AstralAdmin
 
 logger = logging.getLogger("AA_Logger")
 log_formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(filename)s:%(lineno)d:%(message)s")
-
-# Check if the logging file exists
-print(os.path.isdir("./logging/"))
 
 # Get Logging Level
 if "DEPLOYMENT_ENV" not in environ or environ["DEPLOYMENT_ENV"] == "":

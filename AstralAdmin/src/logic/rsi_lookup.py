@@ -54,20 +54,20 @@ async def verify_rsi_handle(rsi_handle, verification_code):
     """
     Get the info on the RSI Users About me.
     """
+    logger.info("Get User About Me")
     url = f"https://api.starcitizen-api.com/{SC_API_KEY}/v1/eager/user/{rsi_handle}"
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(url)
     except httpx.ReadTimeout as exc:
-        print(exc)
+        logger.error(exc)
         return None
     contents = response.json()
     if contents["data"] is not None:
-        print(contents["data"]["profile"])
         try:
             if verification_code in contents["data"]["profile"]["bio"]:
                 return True
         except KeyError as exc:
-            print(exc)
+            logger.error(exc)
             return False
     return False

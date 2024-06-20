@@ -25,6 +25,7 @@ class BackgroundTasks(commands.Cog):
         """
         Automatic trigger to update Discord roles based of the RSI Org page.
         """
+        logger.info("Running Role Update Background Task")
         guild_ids = await firebase_db_connection.get_guild_ids()
         for guild_id in guild_ids:
             # Get list of verified members in the guild

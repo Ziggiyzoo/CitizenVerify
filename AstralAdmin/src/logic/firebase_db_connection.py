@@ -26,6 +26,7 @@ async def put_new_user(author_id: str,
     """
     Add New User to the DB
     """
+    logger.info("Try to Put New User in the Firebase DB")
     user_ref = users_col.document(f"{author_id}")
     try:
         # Set the User Fields
@@ -58,6 +59,7 @@ async def put_new_guild(guild_id: str,
     """
     Add New Guild to the DB
     """
+    logger.info("Try and Put new Guild in the Firebase DB")
     guild_ref = guilds_col.document(f"{guild_id}")
     try:
         # Set the Guilds Fields
@@ -70,19 +72,20 @@ async def put_new_guild(guild_id: str,
         )
         return True
     except exceptions.FirebaseError as exc:
-        print(exc)
+        logger.error(f"Error Putting New Guild in the Firebase DB: {exc}")
         return False
 
 async def del_guild(guild_id: str):
     """
     Delete Guild from the DB
     """
+    logger.info("Try and delete Guild from Firebase DB")
     guild_ref = guilds_col.document(f"{guild_id}")
     try:
         guild_ref.delete()
         return True
     except exceptions.FirebaseError as exc:
-        print(exc)
+        logger.error(f"Error Deleting Guild from Firebase DB: {exc}")
         return False
 
 async def update_user_verification_status(author_id: str,
@@ -91,6 +94,7 @@ async def update_user_verification_status(author_id: str,
     """
     Update User Doc with Verification info
     """
+    logger.info("Try to Update User Verification Status")
     user_ref = users_col.document(f"{author_id}")
     try:
         # Update the User Fields
@@ -112,7 +116,7 @@ async def update_user_guild_verification(author_id: str,
     """
     Update User Doc with time of  Guild Verification Info
     """
-    logger.info("Update User Guild Verification")
+    logger.info("Try to Update User Guild Verification")
     user_guild_ref = users_col.document(f"{author_id}").collection("user_guilds").document(f"{guild_id}")
     guild_ref = guilds_col.document(f"{guild_id}").collection("members").document(f"{author_id}")
     try:
@@ -141,7 +145,7 @@ async def get_user(author_id: str):
     """
     Get the User
     """
-    logger.info("Getting User from Database")
+    logger.info("Try to Get The User from Database")
     try:
         user_ref = users_col.document(f"{author_id}")
     except exceptions.FirebaseError as exc:
@@ -156,10 +160,11 @@ async def get_user_guild(author_id: str,
     """
     Get the Users Guild Info
     """
+    logger.info("Try to get the User's Guild from the DB")
     try:
         user_ref = users_col.document(f"{author_id}").collection("user_guilds").document(f"{guild_id}")
     except exceptions.FirebaseError as exc:
-        print(exc)
+        logger.error(f"Error getting Users Guild from the Firebase DB: {exc}")
         return None
     if user_ref.get().exists:
         return user_ref.get().to_dict()
@@ -169,10 +174,11 @@ async def get_guild_members(guild_id: str):
     """
     Get a list of verified Guild Members
     """
+    logger.info("Try to get a List of Verified Guild Members from the DB")
     try:
         guild_member_info = guilds_col.document(f"{guild_id}").collection("members").select(field_paths=[]).get()
     except exceptions.FirebaseError as exc:
-        print("ERROR IN DB CONNECTION: " + str(exc))
+        logger.error(f"Error in Getting List of Guild Members from the Firebase DB: {exc}")
         return None
     if guild_member_info is not None:
         guild_members = [member.id for member in guild_member_info]
@@ -183,10 +189,11 @@ async def get_guild_ids():
     """
     Get a list of added guilds
     """
+    logger.info("Try and get a List of Guilds from the DB")
     try:
         docs = guilds_col.stream()
     except exceptions.FirebaseError as exc:
-        print("ERROR IN DB CONNECTION: " + str(exc))
+        logger.error(f"Error in Getting List of Guilds from the Firebase DB: {exc}")
         return None
     if docs is not None:
         guild_ids = [doc.to_dict()["guild_id"] for doc in docs]
@@ -197,15 +204,20 @@ async def get_guild_sid(guild_id: str):
     """
     Get Guild SID
     """
+    logger.info("Try Getting Guild SID from the DB")
     try:
         return guilds_col.document(f"{guild_id}").get().to_dict()["guild_spectrum_id"]
 
     except exceptions.FirebaseError as exc:
-        print("ERROR IN DB CONNECTION: " + str(exc))
+        logger.error(f"Error in Getting Guild SID from the Firebase DB: {exc}")
         return None
 
 async def del_user(guild_id: str, user_id: str):
     """
     When a member leaves a guild, delete the user reference from the Guild & User Collection
     """
+    logger.info("Try and Delete user from all locations in the DB")
+
     # TODO
+        # Del from Users Collection
+        # Del from Guild

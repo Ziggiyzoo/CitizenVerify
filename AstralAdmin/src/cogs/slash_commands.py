@@ -46,7 +46,7 @@ class SlashCommands(commands.Cog):
 
         await ctx.defer(ephemeral=True)
 
-        logger.info(f"Binding account for discord user {author_name}")
+        logger.info(f"Binding account for discord user {author_name} & {rsi_handle}")
         try:
             if rsi_handle is None:
                 logger.debug("RSI Handle is None")
@@ -158,6 +158,7 @@ class SlashCommands(commands.Cog):
         """
         Send the user instructions on how to apply to Astral Dynamics.
         """
+        logger.info("Apply Now Command")
         await ctx.respond(f"Hi there {ctx.author.mention}. To Apply to Astral Dynamics please use this link:"
                     + "\n\nhttps://robertsspaceindustries.com/orgs/ASTDYN"
                     + "\n\nOnce you have done this please @ mention Human Resources.",
@@ -171,6 +172,7 @@ class SlashCommands(commands.Cog):
         """
         Admin only command to add the guild to the DB
         """
+        logger.info("Add Guild")
         if await firebase_db_connection.put_new_guild(
             str(ctx.guild_id), ctx.guild.name, spectrum_id
             ):
@@ -188,6 +190,7 @@ class SlashCommands(commands.Cog):
         """
         Admin only command to delete the Discord Guild from the DB
         """
+        logger.info("Delete Guild")
         if await firebase_db_connection.del_guild(guild_id=str(ctx.guild_id)):
             await ctx.respond("The Discord server has been removed from the Database",
                                 ephemeral=True)
@@ -203,6 +206,7 @@ class SlashCommands(commands.Cog):
         """
         Admin only command to trigger the update of Discord roles based of the RSI Org page.
         """
+        logger.info("Update Org Roles Command Run")
         await ctx.respond("Running roles Update Now")
         guild_ids = await firebase_db_connection.get_guild_ids()
         for guild_id in guild_ids:

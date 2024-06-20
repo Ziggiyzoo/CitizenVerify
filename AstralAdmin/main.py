@@ -15,10 +15,10 @@ if "DEPLOYMENT_ENV" not in environ or environ["DEPLOYMENT_ENV"] == "":
     log_file = "astralAdmin.log"
 elif environ["DEPLOYMENT_ENV"] == "DEV":
     log_level = 20
-    log_file = environ["LOG_FILE_PATH"]
+    log_file = environ["/mnt/logs"]
 else:
     log_level= 30
-    log_file = environ["LOG_FILE_PATH"]
+    log_file = environ["/mnt/logs"]
 
 logging.basicConfig(filename=log_file, level=log_level,
                     format="%(asctime)s:%(levelname)s:%(name)s:%(lineno)d:%(message)s")

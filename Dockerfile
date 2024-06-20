@@ -21,6 +21,7 @@ ENV POETRY_NO_INTERACTION=1 \
 
 
 RUN mkdir -p ./app
+RUN mkdir -p /app/logging
 
 COPY pyproject.toml poetry.lock ./
 RUN touch README.md

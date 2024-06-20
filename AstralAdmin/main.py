@@ -17,10 +17,10 @@ if "DEPLOYMENT_ENV" not in environ or environ["DEPLOYMENT_ENV"] == "":
     LOG_FILE = "./logs/astralAdmin.log"
 elif environ["DEPLOYMENT_ENV"] == "DEV":
     LOG_LEVEL = 20
-    LOG_FILE = "/mnt/logs/astralAdmin.log"
+    LOG_FILE = "/app/logging/astralAdmin.log"
 else:
     LOG_LEVEL= 30
-    LOG_FILE = "/mnt/logs/astralAdmin.log"
+    LOG_FILE = "/app/logging/astralAdmin.log"
 
 log_handler = handlers.RotatingFileHandler(LOG_FILE, maxBytes=16384, backupCount=10)
 log_handler.setFormatter(log_formatter)

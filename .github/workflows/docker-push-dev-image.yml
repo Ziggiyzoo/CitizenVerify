@@ -35,7 +35,7 @@ jobs:
           file: ./Dockerfile
           platforms: linux/aarch64
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/${{secrets.DOCKER_REPO }}:develop
+          tags: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:develop
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
               token=${{ secrets.DEV_TOKEN }}

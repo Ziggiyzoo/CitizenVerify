@@ -6,7 +6,7 @@ import traceback
 
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("AA_Logger")
 
 from src.logic import rsi_lookup, firebase_db_connection
 

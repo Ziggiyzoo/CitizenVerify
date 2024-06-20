@@ -8,7 +8,7 @@ from firebase_admin import credentials, firestore, exceptions
 
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("AA_Logger")
 
 cred: credentials.Certificate = credentials.Certificate(json.loads(environ["FIREBASE_SECRET"]))
 

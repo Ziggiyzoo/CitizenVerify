@@ -12,7 +12,7 @@ from src.logic import firebase_db_connection, rsi_lookup, update_user_roles
 
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("AA_Logger")
 
 class SlashCommands(commands.Cog):
     """

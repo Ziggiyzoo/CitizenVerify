@@ -7,7 +7,7 @@ import httpx
 
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("AA_Logger")
 
 SC_API_KEY = environ["SC_API_KEY"]
 

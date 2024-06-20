@@ -6,7 +6,7 @@ import discord.ext.commands as ext_commands
 
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("AA_Logger")
 
 # pylint: disable=too-many-ancestors
 class AstralAdmin(ext_commands.Bot):
@@ -36,6 +36,7 @@ class AstralAdmin(ext_commands.Bot):
         """
         Send Message to New Member
         """
+        logger.info("Try to Send Message in Welcome Channel")
         try:
             welcome = self.get_channel(1230973934048903178)
             lobby = self.get_channel(1231045018471501844)

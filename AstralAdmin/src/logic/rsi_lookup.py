@@ -3,9 +3,8 @@ Astral Admin RSI Lookup
 """
 
 from os import environ
-import httpx
-
 import logging
+import httpx
 
 logger = logging.getLogger("AA_Logger")
 
@@ -24,7 +23,7 @@ async def get_org_membership_info(spectrum_id: str):
         if str(response) != "<Response [200 OK]>":
             raise ConnectionError(str(response))
     except ConnectionError as exc:
-        logger.error(f"Error getting Spectrum User: {exc}")
+        logger.error("Error getting Spectrum User: %s", exc)
         return None
 
 
@@ -42,10 +41,10 @@ async def get_user_info(rsi_handle: str):
         if str(response) != "<Response [200 OK]>":
             raise ConnectionError(str(response))
     except ConnectionError as exc:
-        logger.error(f"Error getting Spectrum User: {exc}")
+        logger.error("Error getting Spectrum User: %s", exc)
         return None
     except httpx.ReadTimeout as exc:
-        logger.error(f"Reading the Spectrum User page took too long: {exc}")
+        logger.error("Reading the Spectrum User page took too long: %s", exc)
         return None
 
     return response.json()
@@ -60,7 +59,7 @@ async def verify_rsi_handle(rsi_handle, verification_code):
         async with httpx.AsyncClient() as client:
             response = await client.get(url)
     except httpx.ReadTimeout as exc:
-        logger.error(exc)
+        logger.error("%s", exc)
         return None
     contents = response.json()
     if contents["data"] is not None:
@@ -68,6 +67,6 @@ async def verify_rsi_handle(rsi_handle, verification_code):
             if verification_code in contents["data"]["profile"]["bio"]:
                 return True
         except KeyError as exc:
-            logger.error(exc)
+            logger.error("%s", exc)
             return False
     return False

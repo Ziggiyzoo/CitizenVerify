@@ -1,10 +1,9 @@
 """
 Module to update a users discord roles.
 """
-import discord
 import traceback
-
 import logging
+import discord
 
 logger = logging.getLogger("AA_Logger")
 
@@ -54,7 +53,7 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
                                 "User Membership Info Dictionary does not exist."
                             )
                     except ValueError as exc:
-                        logger.error(str(exc) + f"For user {user_handle}")
+                        logger.error("%s for User %s", exc, user_handle)
 
                     # Check if the user already has membership role
                     if user_membership_info["stars"] == 0:
@@ -84,7 +83,7 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
                         )
                     else:
                         # User already has this role
-                        pass
+                        logger.debug("User %s already has this role", user_handle)
 
                     # Get users Rank
                     rank = RANK_LIST[user_membership_info["stars"]]
@@ -108,8 +107,7 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
                             )
                     else:
                         # User already has this role
-                        logger.debug(f"User {user_handle} already has this role")
-                        pass
+                        logger.debug("User %s already has this role", user_handle)
 
                     # Get User Organisation Role
                     org_roles = user_membership_info["roles"]
@@ -176,16 +174,11 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
 
     except AttributeError:
         # Uh Oh
-        logger.error(f"Attribute Error while updating roles for {user_handle}: {traceback.format_exc()}")
+        logger.error("Attribute Error while updating roles for %s: %s", user_handle, {traceback.format_exc()})
         return f"Failed to update role for User: {user_handle}. Error: {traceback.format_exc()}"
 
     except discord.DiscordException:
         # Uh Oh
-        logger.error(f"Discord Error while updating roles for {user_handle}: {traceback.format_exc()}")
-        return f"Failed to update role for User: {user_handle}. Error: {traceback.format_exc()}"
-
-    except Exception:
-        # Uh Oh
-        logger.error(f"Unkown Error while updating roles for {user_handle}: {traceback.format_exc()}")
+        logger.error("Attribute Error while updating roles for %s: %s", user_handle, {traceback.format_exc()})
         return f"Failed to update role for User: {user_handle}. Error: {traceback.format_exc()}"
             

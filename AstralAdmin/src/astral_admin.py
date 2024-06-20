@@ -1,10 +1,10 @@
 """
 Astral Admin Bot
 """
+import logging
 import discord
 import discord.ext.commands as ext_commands
 
-import logging
 
 logger = logging.getLogger("AA_Logger")
 
@@ -59,6 +59,6 @@ class AstralAdmin(ext_commands.Bot):
                             inline=False)
             await welcome.send(embed=embed)
         except TypeError as exc:
-            logger.error(exc)
+            logger.error("%s", exc)
         except discord.DiscordException as exc:
-            logger.error(f"{exc}")
+            logger.error("%s", exc)

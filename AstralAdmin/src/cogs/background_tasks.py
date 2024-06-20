@@ -1,11 +1,9 @@
 """
 Background Tasks to loop for the bot.
 """
-
+import logging
 from discord.ext import commands, tasks
 from src.logic import firebase_db_connection, update_user_roles
-
-import logging
 
 logger = logging.getLogger("AA_Logger")
 

@@ -3,14 +3,12 @@ All User Slash Commands for Astral Admin
 """
 import random
 import string
+import logging
 import discord
-import json
 
 from discord.ext import commands
 
 from src.logic import firebase_db_connection, rsi_lookup, update_user_roles
-
-import logging
 
 logger = logging.getLogger("AA_Logger")
 
@@ -46,7 +44,7 @@ class SlashCommands(commands.Cog):
 
         await ctx.defer(ephemeral=True)
 
-        logger.info(f"Binding account for discord user {author_name} & {rsi_handle}")
+        logger.info("Binding account for discord user %s & %s", author_name, rsi_handle)
         try:
             if rsi_handle is None:
                 logger.debug("RSI Handle is None")
@@ -99,7 +97,7 @@ class SlashCommands(commands.Cog):
                                 "There has been an error. Please contact a server Admin."
                             )
                     elif user_info["user_verification_progress"] == 1:
-                        logger.info(f"Verify the User {author_name}")
+                        logger.info("Verify the User %s", author_name)
                         # The user has begun the process and needs verification
                         if await rsi_lookup.verify_rsi_handle(rsi_handle=user_info["user_rsi_handle"],
                                                             verification_code=user_info["user_verification_code"]):
@@ -109,7 +107,7 @@ class SlashCommands(commands.Cog):
                             await firebase_db_connection.update_user_guild_verification(author_id=author_id,
                                                                                         guild_id=guild_id,
                                                                                         guild_verification_status=True)
-                            user_list = [] 
+                            user_list = []
                             user_list.append(user_info)
                             await update_user_roles.update_user_roles(user_list=user_list,
                                                                     bot=self.bot,
@@ -129,7 +127,7 @@ class SlashCommands(commands.Cog):
                                     )
                                 )
                             except discord.errors.Forbidden as exc:
-                                logger.warn(f"Discord does not have permissions to update user {author_name}: {exc}")
+                                logger.warning("Bot does not have permissions to update user %s: %s", author_name, exc)
 
                         else:
                             await ctx.followup.send(
@@ -147,7 +145,7 @@ class SlashCommands(commands.Cog):
                             "\nhttps://robertsspaceindustries.com/orgs/ASTDYN"
                         )
         except discord.DiscordException as exc:
-            logger.error(f"Discord Error in Bind RSI Account. {exc}")
+            logger.error("Discord Error in Bind RSI Account. %s", exc)
             ctx.followup.send("Unfortunately there was an error with the command.")
 
 

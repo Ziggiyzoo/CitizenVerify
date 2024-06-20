@@ -13,19 +13,19 @@ log_formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(filename
 
 # Get Logging Level
 if "DEPLOYMENT_ENV" not in environ or environ["DEPLOYMENT_ENV"] == "":
-    log_level = 10
-    log_file = "./logs/astralAdmin.log"
+    LOG_LEVEL = 10
+    LOG_FILE = "./logs/astralAdmin.log"
 elif environ["DEPLOYMENT_ENV"] == "DEV":
-    log_level = 20
-    log_file = environ["/mnt/logs/astralAdmin.log"]
+    LOG_LEVEL = 20
+    LOG_FILE = environ["/mnt/logs/astralAdmin.log"]
 else:
-    log_level= 30
-    log_file = environ["/mnt/logs/astralAdmin.log"]
+    LOG_LEVEL= 30
+    LOG_FILE = environ["/mnt/logs/astralAdmin.log"]
 
-log_handler = handlers.RotatingFileHandler(log_file, maxBytes=16384, backupCount=10)
+log_handler = handlers.RotatingFileHandler(LOG_FILE, maxBytes=16384, backupCount=10)
 log_handler.setFormatter(log_formatter)
-logger.setLevel(log_level)
-log_handler.setLevel(log_level)
+logger.setLevel(LOG_LEVEL)
+log_handler.setLevel(LOG_LEVEL)
 logger.addHandler(log_handler)
 
 # Main Method
@@ -40,5 +40,5 @@ if __name__ == "__main__":
         Bot.load_extensions("src.cogs", recursive=True)
         Bot.run(token)
     except KeyError as exc:
-        logger.critical(f"Environment Variable {exc} does not exist. Exiting")
+        logger.critical("Environment Variable %s does not exist. Exiting", exc)
           

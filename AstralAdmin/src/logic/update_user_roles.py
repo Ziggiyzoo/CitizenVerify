@@ -12,9 +12,9 @@ logger = logging.getLogger("AA_Logger")
 RANK_LIST = [
                 "Affiliate Programme",
                 "Employees",
-                "Team Leaders",
                 "Managers",
-                "Directors",
+                "Group Lead",
+                "Division Lead",
                 "Board Members"
                 ]
 ORG_ROLES_LIST = [

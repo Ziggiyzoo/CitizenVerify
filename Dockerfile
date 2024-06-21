@@ -17,9 +17,7 @@ ENV DEPLOYMENT_ENV=$deployment_env
 ENV POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \
     POETRY_VIRTUALENVS_CREATE=1 \
-    POETRY_CACHE_DIR=/tmp/poetry_cachez \
-    PYTHONUNBUFFERED=1
-
+    POETRY_CACHE_DIR=/tmp/poetry_cachez
 
 RUN mkdir -p ./app
 

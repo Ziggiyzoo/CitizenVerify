@@ -2,7 +2,7 @@
 Org Discord Bot
 """
 import logging
-from logging import handlers
+from logging import StreamHandler
 
 from os import environ
 
@@ -19,7 +19,7 @@ elif environ["DEPLOYMENT_ENV"] == "DEV":
 else:
     LOG_LEVEL= 30
 
-log_handler = handlers.RotatingFileHandler("./logs/astralAdmin.log", maxBytes=16384, backupCount=10)
+log_handler = StreamHandler()
 log_handler.setFormatter(log_formatter)
 logger.setLevel(LOG_LEVEL)
 log_handler.setLevel(LOG_LEVEL)

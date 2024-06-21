@@ -17,17 +17,19 @@ log_handler.setFormatter(log_formatter)
 
 # Get Logging Level
 if "DEPLOYMENT_ENV" not in environ or environ["DEPLOYMENT_ENV"] == "":
-    LOG_LEVEL = 10
+    LOG_LEVEL = "DUBUG"
 elif environ["DEPLOYMENT_ENV"] == "DEV":
-    LOG_LEVEL = 20
+    LOG_LEVEL = "INFO"
 else:
-    LOG_LEVEL= 30
+    LOG_LEVEL = "WARNING"
 
 logger.setLevel(LOG_LEVEL)
 logger.addHandler(log_handler)
 
 # Logging Test
 print("Logging Test")
+print(f"{environ["DEPLOYMENT_ENV"]}")
+print(f"{LOG_LEVEL}")
 logger.debug("DEBUG")
 logger.info("INFO")
 logger.warning("WARNING")

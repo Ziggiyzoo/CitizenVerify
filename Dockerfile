@@ -20,6 +20,7 @@ ENV POETRY_NO_INTERACTION=1 \
     POETRY_CACHE_DIR=/tmp/poetry_cachez
 
 RUN mkdir -p ./app
+RUN mkdir -p /app/logs
 
 COPY pyproject.toml poetry.lock ./
 RUN touch README.md

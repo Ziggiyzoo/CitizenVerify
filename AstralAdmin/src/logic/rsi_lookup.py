@@ -24,7 +24,7 @@ async def get_org_membership_info(spectrum_id: str):
             raise ConnectionError(str(response))
     except ConnectionError as exc:
         logger.error("Error getting Spectrum User: %s", exc)
-        return None
+        return "ConnectionError"
 
 
     return response.json()

@@ -49,13 +49,17 @@ class SlashCommands(commands.Cog):
             if rsi_handle is None:
                 logger.debug("RSI Handle is None")
                 await ctx.followup.send(
-                    "Please input your RSI Handle."
+                    "Please input your RSI Handle. If you have already run the command, press the Up Arrow to re run it!"
                 )
             user =  await rsi_lookup.get_user_info(rsi_handle=rsi_handle)
             if user is None:
                 logger.debug("RSI Handle is Invalid")
                 await ctx.followup.send(
                     "That RSI Handle is invalid. Please input a correct Value"
+                )
+            elif user == "ConnectioError":
+                await ctx.followup.send(
+                    "There was a connection error getting your User information from the RSI Page. This is a known error."
                 )
             else:
                 # Check if the user exists

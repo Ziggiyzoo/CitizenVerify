@@ -2,7 +2,9 @@
 Org Discord Bot
 """
 import logging
-from logging import handlers
+import sys
+
+from logging import StreamHandler
 
 from os import environ
 
@@ -10,6 +12,8 @@ from src.astral_admin import AstralAdmin
 
 logger = logging.getLogger("AA_Logger")
 log_formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(filename)s:%(lineno)d:%(message)s")
+log_handler = StreamHandler(sys.stderr)
+log_handler.setFormatter(log_formatter)
 
 # Get Logging Level
 if "DEPLOYMENT_ENV" not in environ or environ["DEPLOYMENT_ENV"] == "":
@@ -19,11 +23,16 @@ elif environ["DEPLOYMENT_ENV"] == "DEV":
 else:
     LOG_LEVEL= 30
 
-log_handler = handlers.RotatingFileHandler("./logs/astralAdmin.log", maxBytes=16384, backupCount=10)
-log_handler.setFormatter(log_formatter)
 logger.setLevel(LOG_LEVEL)
-log_handler.setLevel(LOG_LEVEL)
 logger.addHandler(log_handler)
+
+# Logging Test
+print("Logging Test")
+logger.debug("DEBUG")
+logger.info("INFO")
+logger.warning("WARNING")
+logger.error("ERROR")
+logger.critical("CRITICAL")
 
 # Main Method
 if __name__ == "__main__":

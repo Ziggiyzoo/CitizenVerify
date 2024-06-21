@@ -41,4 +41,4 @@ jobs:
               token=${{ secrets.PROD_TOKEN }}
               sc_api_key=${{ secrets.SC_API_KEY }}
               firebase_secret=${{ secrets.FIREBASE_SECRET }}
-              deployment_env="PROD"
+              deployment_env=PROD

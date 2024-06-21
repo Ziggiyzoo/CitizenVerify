@@ -2,6 +2,7 @@
 Org Discord Bot
 """
 import logging
+import sys
 from logging import StreamHandler
 
 from os import environ
@@ -19,7 +20,7 @@ elif environ["DEPLOYMENT_ENV"] == "DEV":
 else:
     LOG_LEVEL= 30
 
-log_handler = StreamHandler()
+log_handler = StreamHandler(sys.stdout)
 log_handler.setFormatter(log_formatter)
 logger.setLevel(LOG_LEVEL)
 log_handler.setLevel(LOG_LEVEL)

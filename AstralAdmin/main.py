@@ -23,7 +23,6 @@ else:
 log_handler = StreamHandler(sys.stdout)
 log_handler.setFormatter(log_formatter)
 logger.setLevel(LOG_LEVEL)
-log_handler.setLevel(LOG_LEVEL)
 logger.addHandler(log_handler)
 
 # Main Method

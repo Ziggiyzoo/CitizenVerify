@@ -32,4 +32,4 @@ RUN ls ./app
 
 WORKDIR /app
 
-ENTRYPOINT ["poetry", "run", "python", "main.py"]
+ENTRYPOINT ["poetry", "run", "python", "-u", "main.py"]

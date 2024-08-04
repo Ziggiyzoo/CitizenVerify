@@ -9,8 +9,10 @@ import discord
 from discord.ext import commands
 
 from src.logic import firebase_db_connection, rsi_lookup, update_user_roles
+from src.logic.slash_commands import SlashCommandsLogic
 
 logger = logging.getLogger("AA_Logger")
+logic = SlashCommandsLogic()
 
 class SlashCommands(commands.Cog):
     """
@@ -26,8 +28,8 @@ class SlashCommands(commands.Cog):
     async def ping(self, ctx):
         """
         Ping! :)
-        """
-        await ctx.respond("Pong!", ephemeral=True)
+        """ 
+        await ctx.respond(await logic.ping, ephemeral=True)
         logger.info("Ping. Pong. Haha Very Funny")
 
     # pylint: disable=no-member

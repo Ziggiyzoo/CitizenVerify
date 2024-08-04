@@ -42,7 +42,7 @@ async def get_user_info(rsi_handle: str):
             raise ConnectionError(str(response))
     except ConnectionError as exc:
         logger.error("Error getting Spectrum User: %s", exc)
-        return None
+        return "Response Not OK"
     except httpx.ReadTimeout as exc:
         logger.error("Reading the Spectrum User page took too long: %s", exc)
         return None

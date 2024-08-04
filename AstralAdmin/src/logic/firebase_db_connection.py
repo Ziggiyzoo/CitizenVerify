@@ -19,11 +19,11 @@ guilds_col = db.collection("guilds")
 
 async def put_new_user(author_id: str,
                        guild_id: str,
-                       user_verification_code: str,
                        rsi_handle: str,
-                       display_name: str):
+                       display_name: str,
+                       user_verification_code: str):
     """
-    Add New User to the DB
+    Add New User to the guild they are registering with in the DB
     """
     logger.info("Try to Put New User in the Firebase DB")
     user_ref = users_col.document(f"{author_id}")

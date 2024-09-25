@@ -36,7 +36,7 @@ class SlashCommands(commands.Cog):
         ):
         """
         Ping! :)
-        """ 
+        """
         await ctx.respond(await slash_logic.ping(), ephemeral=True)
         logger.info("Ping. Pong. Haha Very Funny")
 
@@ -75,7 +75,7 @@ class SlashCommands(commands.Cog):
         else:
             # The API has worked, and the RSI Handle is valid
             logger.info("Binding account for Discord User %s & RSI Handle %s", author_name, rsi_handle)
-            
+ 
             # Generate a verification code for the User
             code = "".join([random.choice(string.ascii_letters) for n in range(10)])
 
@@ -92,7 +92,7 @@ class SlashCommands(commands.Cog):
                 # An error or occured, or the user is attempting to use an already bound RSI Handle
                 logger.error(
                     "There was an error in the binding of the following Discord and RSI Accounts. " +
-                    f"Discord: {author_name}, RSI Handle: {rsi_handle}."
+                    "Discord: %s, RSI Handle: %s.", author_name, rsi_handle
                     )
                 ctx.followup.send(
                     "An Error was encountered adding your Discord User to the system. " +
@@ -112,12 +112,12 @@ class SlashCommands(commands.Cog):
                                                                             user_verification_status=False,
                                                                             user_verification_progress=1
                                                                             )
-            
+
             else:
                 ctx.followup.send(
                     f"Greetings {author_name}, you already have a verification code! " +
                     f"\nIf you need a reminder, your code is {result}." +
-                    f"\nPlease be sure to put it in your Short Bio, found here " + 
+                    "\nPlease be sure to put it in your Short Bio, found here " + 
                     "https://robertsspaceindustries.com/account/profile" +
                     "\n\nPlease run the /validate command to continue."
                 )
@@ -131,7 +131,7 @@ class SlashCommands(commands.Cog):
     async def validate(
         self,
         ctx
-        ):         
+        ):
         """
         Continuation of the verification process. 
         """

@@ -2,7 +2,6 @@
 Org Discord Bot
 """
 import logging
-import sys
 
 from logging import handlers
 

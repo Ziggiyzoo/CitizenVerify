@@ -72,14 +72,14 @@ class SlashCommandsLogic:
         """
         await firebase_db_connection.put_new_user(
             self,
-            author_id=str(author_id),
-            guild_id=str(guild_id),
+            str(author_id),
+            str(guild_id),
             rsi_handle=user["data"]["profile"]["handle"],
             display_name=user["data"]["profile"]["display"],
             user_verification_code=code,
         )
 
-    async def check_db_for_rsi_user(rsi_handle):
+    async def check_db_for_rsi_user(self, rsi_handle):
         """
         Checks if this RSI Handle has been already registered with the Guild.
         """

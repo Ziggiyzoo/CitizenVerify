@@ -74,9 +74,9 @@ class SlashCommandsLogic:
             self,
             str(author_id),
             str(guild_id),
-            rsi_handle=user["data"]["profile"]["handle"],
-            display_name=user["data"]["profile"]["display"],
-            user_verification_code=code,
+            user["data"]["profile"]["handle"],
+            user["data"]["profile"]["display"],
+            code,
         )
 
     async def check_db_for_rsi_user(self, rsi_handle):

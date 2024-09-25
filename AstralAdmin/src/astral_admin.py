@@ -39,7 +39,7 @@ class AstralAdmin(ext_commands.Bot):
         logger.info("Try to Send Message in Welcome Channel")
         try:
             welcome = self.get_channel(1230973934048903178)
-            lobby = self.get_channel(1231045018471501844)
+            general = self.get_channel(1230975778641154089)
 
             await welcome.send(member.mention)
             embed = discord.Embed(
@@ -51,13 +51,30 @@ class AstralAdmin(ext_commands.Bot):
                             value="To **Apply** to Astral Dynamics & gain access to the Discord Server," +
                             " click [**here**](https://robertsspaceindustries.com/orgs/ASTDYN/)")
             embed.add_field(name="REGISTER WITH OUR ADMIN ASSISTANT",
-                            value=f"Please make your way to {lobby.mention} and utilise the" +
+                            value=f"Please make your way to {general.mention} and utilise the" +
                             " `/bind-rsi-account` command until you have completed the process.")
             embed.add_field(name="Organisation Overview",
                             value="\n*Astral Dynamics focuses on providing* ***Resource Acquisition***,"
                             " ***Processing & Delivery*** *in a* ***Secure*** *and* ***Timely*** *Manner*.",
                             inline=False)
             await welcome.send(embed=embed)
+        except TypeError as exc:
+            logger.error("%s", exc)
+        except discord.DiscordException as exc:
+            logger.error("%s", exc)
+
+    async def on_member_leave(self, member):
+        """
+        Send Message to Mod Channel when a member leaves.
+        TODO:
+            - Remove user from the DB if they are in it when they leave.
+        """
+        logger.info("User has left. Inform moderation & attempt to remove them form the Database")
+        try:
+            leave = self.get_channel(1288438649632985098)
+
+            await leave.send(f"Member: {member.mention} has left the server. Please check their status in the Corporation & Database")
+
         except TypeError as exc:
             logger.error("%s", exc)
         except discord.DiscordException as exc:

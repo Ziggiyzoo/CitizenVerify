@@ -9,7 +9,7 @@ import string
 import discord
 from discord.ext import commands
 from src.logic import firebase_db_connection, rsi_lookup, update_user_roles
-from src.logic.slash_logic import SlashCommandsLogic as slash_logic
+from src.logic.slash_logic import SlashCommandsLogic
 
 # Create Logger
 logger = logging.getLogger("AA_Logger")
@@ -22,13 +22,14 @@ class SlashCommands(commands.Cog):
 
     def __init__(self, bot):
         self.bot: commands.Bot = bot
+        self.slash_logic = SlashCommandsLogic()
 
     @commands.slash_command(name="ping", description="Ping! :)")
     async def ping(self, ctx):
         """
         Ping! :)
         """
-        await ctx.respond(await slash_logic.ping(), ephemeral=True)
+        await ctx.respond(await self.slash_logic.ping(), ephemeral=True)
         logger.info("Ping. Pong. Haha Very Funny")
 
     # pylint: disable=no-member
@@ -60,7 +61,7 @@ class SlashCommands(commands.Cog):
             code = "".join([random.choice(string.ascii_letters) for n in range(10)])
 
             # Is the User already in the DB?
-            result = await slash_logic.check_db_for_user(
+            result = await self.slash_logic.check_db_for_user(
                 user=rsi_user_json, author_id=author_id, rsi_handle=rsi_handle, guild_id=guild_id, bot=self.bot, code=code
             )
 
@@ -130,7 +131,7 @@ class SlashCommands(commands.Cog):
             logger.info("Attempting to validate the user %s.", author_name)
 
             # Valiadate the User
-            if slash_logic.validate_user(user_db_info, author_name, author_id, guild_id, ctx, bot=self.bot):
+            if self.slash_logic.validate_user(user_db_info, author_name, author_id, guild_id, ctx, bot=self.bot):
                 await ctx.followup.send(
                     f"Thank you {user_db_info['rsi_handle']}, your Discord and RSI Accounts are now symbollically bound."
                     + "\n\nYou will not be able to access any more of the server unless you are a "

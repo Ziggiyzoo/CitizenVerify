@@ -11,13 +11,16 @@ logger = logging.getLogger("AA_Logger")
 
 
 class SlashCommandsLogic:
+    """
+    Logic for Slash Commands
+    """
 
     def __init__(self):
         """
         Init
         """
 
-    async def ping():
+    async def ping(self):
         """
         Ping?.. Pong!! The most basic of tests.
         """
@@ -68,6 +71,7 @@ class SlashCommandsLogic:
         Add the user to the DB
         """
         await firebase_db_connection.put_new_user(
+            self,
             author_id=str(author_id),
             guild_id=str(guild_id),
             rsi_handle=user["data"]["profile"]["handle"],
@@ -87,10 +91,9 @@ class SlashCommandsLogic:
         user = await rsi_lookup.get_user_info(rsi_handle=rsi_handle)
         if user is None:
             return None
-        else:
-            return user
+        return user
 
-    async def validate_user(user_db_info, author_name: str, author_id: int, guild_id: int, ctx, bot: discord.ext.commands.Bot):
+    async def validate_user(self, user_db_info, author_name: str, author_id: int, guild_id: int, ctx, bot: discord.ext.commands.Bot):
         """
         Validate the User.
         """
@@ -101,7 +104,7 @@ class SlashCommandsLogic:
 
         # Verify that the Validation Code is on the RSI Website.
         if await rsi_lookup.verify_rsi_handle(rsi_handle=user_db_info["rsi_handle"], verification_code=user_db_info["user_verification_code"]):
-            logger.info(f"The user {author_name} is Validated.")
+            logger.info("The user %s is Validated.", author_name)
 
             # The user is Validated. Update the User DB and Guild DB
             await firebase_db_connection.update_user_verification_status(
@@ -110,7 +113,7 @@ class SlashCommandsLogic:
             await firebase_db_connection.update_user_guild_verification(author_id=author_id, guild_id=guild_id, guild_verification_status=True)
 
             # Update the users roles
-            logger.info(f"Update the Roles for {author_name}")
+            logger.info("Update the Roles for %s.", author_name)
             user_list = []
             user_list.append(user_db_info)
             try:

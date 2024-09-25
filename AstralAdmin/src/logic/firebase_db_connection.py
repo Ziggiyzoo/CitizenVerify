@@ -20,7 +20,7 @@ users_col = db.collection("users")
 guilds_col = db.collection("guilds")
 
 
-async def put_new_user(self, author_id: str, guild_id: str, rsi_handle: str, display_name: str, user_verification_code: str):
+async def put_new_user(author_id: str, guild_id: str, rsi_handle: str, display_name: str, user_verification_code: str):
     """
     Add New User to the guild they are registering with in the DB
     """

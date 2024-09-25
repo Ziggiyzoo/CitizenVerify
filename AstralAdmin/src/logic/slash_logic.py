@@ -71,7 +71,6 @@ class SlashCommandsLogic:
         Add the user to the DB
         """
         await firebase_db_connection.put_new_user(
-            self,
             str(author_id),
             str(guild_id),
             user["data"]["profile"]["handle"],

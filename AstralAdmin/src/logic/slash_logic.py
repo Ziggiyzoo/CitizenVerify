@@ -19,9 +19,7 @@ class SlashCommandsLogic():
     Init
     """
 
-  async def ping(
-    self
-    ):
+  async def ping():
     """
     Ping?.. Pong!! The most basic of tests.
     """
@@ -33,7 +31,7 @@ class SlashCommandsLogic():
     author_id: int,
     rsi_handle: str,
     guild_id: int,
-    bot: discord.ext_commands.Bot,
+    bot: discord.ext.commands.Bot,
     code: str
     ):
     """
@@ -122,7 +120,7 @@ class SlashCommandsLogic():
     author_id: int,
     guild_id: int,
     ctx,
-    bot: discord.ext_commands.Bot
+    bot: discord.ext.commands.Bot
     ):
     """
     Validate the User.

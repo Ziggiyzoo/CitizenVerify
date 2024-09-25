@@ -171,7 +171,7 @@ class SlashCommands(commands.Cog):
                 bot=self.bot
                 ):
                 await ctx.followup.send(
-                    f"Thank you {user_db_info["rsi_handle"]}, your Discord and RSI Accounts are now symbollically bound."
+                    f"Thank you {user_db_info['rsi_handle']}, your Discord and RSI Accounts are now symbollically bound."
                     + "\n\nYou will not be able to access any more of the server unless you are a "
                     + "Member or Affiliate of Astral Dynamics. Sign up for membership here:"
                     + "https://robertsspaceindustries.com/orgs/ASTDYN",

@@ -63,7 +63,7 @@ class AstralAdmin(ext_commands.Bot):
         except discord.DiscordException as exc:
             logger.error("%s", exc)
 
-    async def on_member_leave(self, member):
+    async def on_member_remove(self, member):
         """
         Send Message to Mod Channel when a member leaves.
         TODO:

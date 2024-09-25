@@ -39,7 +39,7 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
         logger.info("Update User Roles")
         # Update Users in the Discord
         for user in user_list:
-            if user is not None:
+            if user is not None and user["user_rsi_handle"] != "Ziggiyzoo":
                 user_handle = user["user_rsi_handle"]
                 user = await guild.fetch_member(int(user["user_id"]))
                 # Get Users Roles
@@ -168,6 +168,8 @@ async def update_user_roles(user_list: list, bot: discord.bot, guild_id: str):
                                     name=membership_role
                                 )
                             )
+            elif user["user_rsi_handle"] == "Ziggiyzoo":
+                logger.info("Skipping server owner")
             else:
                 raise AttributeError("User List returned None from the DB")
         return "Roles Updated"

@@ -2,8 +2,9 @@
 Astral Admin RSI Lookup
 """
 
-from os import environ
 import logging
+from os import environ
+
 import httpx
 
 logger = logging.getLogger("AA_Logger")
@@ -26,8 +27,8 @@ async def get_org_membership_info(spectrum_id: str):
         logger.error("Error getting Spectrum User: %s", exc)
         return None
 
-
     return response.json()
+
 
 async def get_user_info(rsi_handle: str):
     """
@@ -48,6 +49,7 @@ async def get_user_info(rsi_handle: str):
         return None
 
     return response.json()
+
 
 async def verify_rsi_handle(rsi_handle, verification_code):
     """

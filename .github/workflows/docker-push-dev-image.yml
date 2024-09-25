@@ -42,5 +42,3 @@ jobs:
               sc_api_key=${{ secrets.SC_API_KEY }}
               firebase_secret=${{ secrets.FIREBASE_SECRET }}
               deployment_env=DEV
-
-            

@@ -1,10 +1,9 @@
 """
 Org Discord Bot
 """
+
 import logging
-
 from logging import handlers
-
 from os import environ
 
 from src.astral_admin import AstralAdmin
@@ -38,4 +37,3 @@ if __name__ == "__main__":
         Bot.run(token)
     except KeyError as exc:
         logger.critical("Environment Variable %s does not exist. Exiting", exc)
-          

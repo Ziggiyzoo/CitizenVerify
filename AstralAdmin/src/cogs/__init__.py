@@ -1,7 +1,9 @@
 """
 Astral Admin Cogs
 """
-from src.cogs import slash_commands, background_tasks
+
+from src.cogs import background_tasks, slash_commands
+
 
 def setup(bot):
     """
@@ -9,4 +11,3 @@ def setup(bot):
     """
     slash_commands.setup(bot)
     background_tasks.setup(bot)
-    

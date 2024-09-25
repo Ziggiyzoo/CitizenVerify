@@ -1,6 +1,7 @@
 """
 Logic for the Astral Admin bot
 """
+
 import os
 
 

@@ -1,11 +1,14 @@
 """
 Background Tasks to loop for the bot.
 """
+
 import logging
+
 from discord.ext import commands, tasks
 from src.logic import firebase_db_connection, update_user_roles
 
 logger = logging.getLogger("AA_Logger")
+
 
 class BackgroundTasks(commands.Cog):
     """
@@ -32,14 +35,13 @@ class BackgroundTasks(commands.Cog):
             # Get verified member info
             user_list = []
             for member_id in guild_members:
-                user_list.append(
-                    await firebase_db_connection.get_user(author_id=str(member_id))
-                )
+                user_list.append(await firebase_db_connection.get_user(author_id=str(member_id)))
 
             response = await update_user_roles.update_user_roles(user_list=user_list, bot=self.bot, guild_id=guild_id)
             if response is not None:
                 log_here = self.bot.get_channel(1233738280118390795)
                 await log_here.send(response)
+
 
 def setup(bot):
     """

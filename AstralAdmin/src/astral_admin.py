@@ -41,7 +41,7 @@ class AstralAdmin(ext_commands.Bot):
         logger.info("Try to Send Message in Welcome Channel")
         try:
             welcome = self.get_channel(1230973934048903178)
-            general = self.get_channel(1230975778641154089)
+            # general = self.get_channel(1230975778641154089)
 
             await welcome.send(member.mention)
             embed = discord.Embed(
@@ -51,14 +51,14 @@ class AstralAdmin(ext_commands.Bot):
             )
             embed.add_field(
                 name="APPLY NOW",
-                value="To **Apply** to Astral Dynamics & gain access to the Discord Server,"
-                + " click [**here**](https://robertsspaceindustries.com/orgs/ASTDYN/)",
+                value="To **Apply** to Astral Dynamics & gain full access to the Discord Server,"
+                + " and events click [**here**](https://robertsspaceindustries.com/orgs/ASTDYN/).",
             )
-            embed.add_field(
-                name="REGISTER WITH OUR ADMIN ASSISTANT",
-                value=f"Please make your way to {general.mention} and utilise the"
-                + " `/bind-rsi-account` command until you have completed the process.",
-            )
+            # embed.add_field(
+            #     name="REGISTER WITH OUR ADMIN ASSISTANT",
+            #     value=f"Please make your way to {general.mention} and utilise the"
+            #     + " `/bind-rsi-account` command until you have completed the process.",
+            # )
             embed.add_field(
                 name="Organisation Overview",
                 value="\n*Astral Dynamics focuses on providing* ***Resource Acquisition***,"

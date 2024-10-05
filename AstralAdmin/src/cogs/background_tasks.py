@@ -19,7 +19,7 @@ class BackgroundTasks(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
         logger.info("Start Update Org Roles Task")
-        self.update_org_roles.start()
+        # self.update_org_roles.start()
 
     # # pylint: disable=duplicate-code
     # @tasks.loop(hours=1)
